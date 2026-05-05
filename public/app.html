@@ -203,7 +203,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.97);backdrop-fi
           <div class="section-title">Rifle &amp; Zero</div>
           <div class="field-group">
             <div class="field-row">
-              <div class="field"><label>Muzzle Velocity (fps)</label><input type="number" id="mv" value="2650" step="10"></div>
+              <div class="field"><label>Muzzle Velocity (fps)</label><input type="number" id="mv" value="2650" step="10" oninput="syncWindMV()"></div>
               <div class="field"><label>Zero Range (yds)</label><input type="number" id="zero" value="100" step="25"></div>
             </div>
             <div class="field"><label>Sight Height (in)</label><input type="number" id="sight-height" value="1.5" step="0.1"></div>
@@ -1527,6 +1527,12 @@ function clockClick(e){
   if(wclk){ wclk.value=hours.toFixed(1); calcWind(); }
 }
 
+function syncWindMV(){
+  var mv = document.getElementById('mv');
+  var wmv = document.getElementById('w-mv');
+  if(mv && wmv) wmv.value = mv.value;
+}
+
 function buildDB(){
   const sel=g('bullet-select');
   BULLETS.forEach((b,i)=>{const o=document.createElement('option');o.value=i;o.textContent=b.mfr+' - '+b.name;sel.appendChild(o);});
@@ -1615,7 +1621,7 @@ function showPanel(id){
   if(id==='tools'){calcClicks();calcConv();}
 }
 
-buildDB();calcWind();initAdvanced();
+buildDB();calcWind();initAdvanced();syncWindMV();
 </script>
 </body>
 </html>
