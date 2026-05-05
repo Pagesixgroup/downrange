@@ -89,6 +89,35 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.97);backdrop-fi
 .empty-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--fog);margin-bottom:8px}
 .results-toolbar{display:flex;gap:8px;margin-bottom:16px;justify-content:flex-end}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--soil);border-radius:3px}
+.adv-section{display:none}
+.adv-section.open{display:block}
+.adv-toggle-btn{width:100%;padding:10px 16px;background:rgba(196,169,107,0.04);border:1px solid var(--border);border-radius:6px;color:var(--stone);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.adv-toggle-btn:hover{border-color:var(--border-bright);color:var(--wheat)}
+.adv-toggle-btn.active{border-color:var(--amber);color:var(--amber);background:rgba(212,136,58,0.05)}
+.adv-arrow{transition:transform 0.2s;font-size:10px}
+.adv-toggle-btn.active .adv-arrow{transform:rotate(180deg)}
+.hud-display{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:32px;text-align:center;margin-bottom:16px}
+.hud-val{font-family:'Playfair Display',serif;font-size:72px;font-weight:900;color:var(--wheat);line-height:1;margin-bottom:8px}
+.hud-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--stone);letter-spacing:0.15em;text-transform:uppercase}
+.hud-sub{font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--amber);margin-top:8px}
+.hud-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.hud-box{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+.hud-box-val{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--cream);line-height:1;margin-bottom:4px}
+.hud-box-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--stone);letter-spacing:0.1em;text-transform:uppercase}
+.hud-range-input{width:100%;font-family:'Playfair Display',serif;font-size:36px;font-weight:700;text-align:center;background:rgba(0,0,0,0.4);border:1px solid var(--border-bright);border-radius:8px;padding:16px;color:var(--wheat);outline:none;margin-bottom:16px}
+.dope-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:12px}
+.dope-table th{background:rgba(196,169,107,0.08);color:var(--wheat);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+.dope-table td{padding:9px 12px;border-bottom:1px solid rgba(196,169,107,0.06);color:var(--fog);vertical-align:middle}
+.dope-table tr:hover td{background:rgba(196,169,107,0.04)}
+.tool-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:16px}
+.tool-result{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--wheat);margin:16px 0 4px}
+.tool-result-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--stone);letter-spacing:0.1em;text-transform:uppercase}
+.click-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:13px;margin-top:12px}
+.click-table td{padding:8px 12px;border-bottom:1px solid rgba(196,169,107,0.06);color:var(--fog)}
+.click-table td:first-child{color:var(--cream);font-weight:500}
+.click-table td:last-child{color:var(--wheat);text-align:right;font-size:18px;font-family:'Playfair Display',serif;font-weight:700}
+.true-result{font-family:'JetBrains Mono',monospace;font-size:12px;padding:12px 16px;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:6px;margin-top:12px;line-height:1.8;color:var(--fog)}
+.true-val{color:var(--wheat);font-size:15px;font-weight:500}
 .profile-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;transition:all 0.2s;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer}
 .profile-card:hover{border-color:var(--border-bright)}
 .profile-card.active-profile{border-color:var(--wheat);background:rgba(196,169,107,0.05)}
@@ -144,6 +173,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.97);backdrop-fi
     <button class="nav-tab" onclick="showPanel('favorites')">&#9733; Favorites</button>
     <button class="nav-tab" onclick="showPanel('wind')">Wind Calls</button>
     <button class="nav-tab" onclick="showPanel('profiles')">&#9881; Profiles</button>
+    <button class="nav-tab" onclick="showPanel('hud')">&#9650; HUD</button>
+    <button class="nav-tab" onclick="showPanel('dope')">&#128214; DOPE Book</button>
+    <button class="nav-tab" onclick="showPanel('tools')">&#128295; Tools</button>
   </div>
 </nav>
 
@@ -210,60 +242,66 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.97);backdrop-fi
             </div>
           </div>
         </div>
-        <div class="card">
-          <div class="toggle-row">
-            <span class="toggle-label"><span style="width:3px;height:14px;background:var(--amber);border-radius:2px;display:inline-block;flex-shrink:0"></span>Spin &amp; Stability</span>
-            <label class="toggle"><input type="checkbox" id="sg-enable" onchange="toggleSG()"><span class="slider"></span></label>
-          </div>
-          <div id="sg-section" class="section-disabled field-group">
-            <div class="field-row">
-              <div class="field"><label>Twist Rate (in/rev)</label><input type="number" id="twist" value="10" step="0.5" min="5" max="20" oninput="calcSG()"></div>
-              <div class="field"><label>Twist Direction</label><select id="twist-dir" onchange="calcSG()"><option value="1">Right Hand</option><option value="-1">Left Hand</option></select></div>
+        <button class="adv-toggle-btn" id="adv-toggle-btn" onclick="toggleAdvanced()">
+          <span>&#9652; Advanced Options — Spin &amp; Stability / Coriolis / Angled Fire</span>
+          <span class="adv-arrow">&#9660;</span>
+        </button>
+        <div class="adv-section" id="adv-section">
+          <div class="card">
+            <div class="toggle-row">
+              <span class="toggle-label"><span style="width:3px;height:14px;background:var(--amber);border-radius:2px;display:inline-block;flex-shrink:0"></span>Spin &amp; Stability</span>
+              <label class="toggle"><input type="checkbox" id="sg-enable" onchange="toggleSG()"><span class="slider"></span></label>
             </div>
-            <div class="field-row">
-              <div class="field"><label>Bullet Length (in)</label><input type="number" id="bullet-length" value="1.35" step="0.01" oninput="calcSG()"></div>
-              <div class="field"><label>Diameter (in)</label><input type="number" id="sg-dia" value="0.308" step="0.001" oninput="calcSG()"></div>
-            </div>
-            <div id="sg-result" class="sg-result" style="display:none"></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="toggle-row">
-            <span class="toggle-label"><span style="width:3px;height:14px;background:var(--amber);border-radius:2px;display:inline-block;flex-shrink:0"></span>Coriolis Effect</span>
-            <label class="toggle"><input type="checkbox" id="cor-enable"><span class="slider"></span></label>
-          </div>
-          <div id="cor-section" class="section-disabled field-group">
-            <div class="field-row">
-              <div class="field">
-                <label>Latitude (deg)</label>
-                <div style="display:flex;gap:6px"><input type="number" id="latitude" value="35.0" step="0.1" min="-90" max="90"><button class="gps-btn" onclick="getLatLon()">GPS</button></div>
+            <div id="sg-section" class="section-disabled field-group">
+              <div class="field-row">
+                <div class="field"><label>Twist Rate (in/rev)</label><input type="number" id="twist" value="10" step="0.5" min="5" max="20" oninput="calcSG()"></div>
+                <div class="field"><label>Twist Direction</label><select id="twist-dir" onchange="calcSG()"><option value="1">Right Hand</option><option value="-1">Left Hand</option></select></div>
               </div>
-              <div class="field"><label>Azimuth (deg true)</label><input type="number" id="azimuth" value="0" step="1" min="0" max="360"></div>
-            </div>
-            <div class="field"><label>Hemisphere</label><select id="hemisphere"><option value="1">Northern</option><option value="-1">Southern</option></select></div>
-            <div id="cor-info" class="sg-result" style="font-size:10px;color:var(--stone)">Coriolis columns added to range card when calculated</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="toggle-row">
-            <span class="toggle-label"><span style="width:3px;height:14px;background:var(--amber);border-radius:2px;display:inline-block;flex-shrink:0"></span>Angled Fire</span>
-            <label class="toggle"><input type="checkbox" id="angle-enable" onchange="toggleAngle()"><span class="slider"></span></label>
-          </div>
-          <div id="angle-section" class="section-disabled field-group">
-            <div class="field-row">
-              <div class="field">
-                <label>Angle (degrees)</label>
-                <input type="number" id="fire-angle" value="0" step="1" min="-90" max="90" placeholder="+ uphill / - downhill">
+              <div class="field-row">
+                <div class="field"><label>Bullet Length (in)</label><input type="number" id="bullet-length" value="1.35" step="0.01" oninput="calcSG()"></div>
+                <div class="field"><label>Diameter (in)</label><input type="number" id="sg-dia" value="0.308" step="0.001" oninput="calcSG()"></div>
               </div>
-              <div class="field">
-                <label>Range Type</label>
-                <select id="range-type">
-                  <option value="slant">Slant (laser) range</option>
-                  <option value="horizontal">True horizontal range</option>
-                </select>
-              </div>
+              <div id="sg-result" class="sg-result" style="display:none"></div>
             </div>
-            <div id="angle-info" class="sg-result" style="font-size:10px;color:var(--stone)">Corrected hold shown in range card. Both uphill and downhill reduce required elevation.</div>
+          </div>
+          <div class="card">
+            <div class="toggle-row">
+              <span class="toggle-label"><span style="width:3px;height:14px;background:var(--amber);border-radius:2px;display:inline-block;flex-shrink:0"></span>Coriolis Effect</span>
+              <label class="toggle"><input type="checkbox" id="cor-enable"><span class="slider"></span></label>
+            </div>
+            <div id="cor-section" class="section-disabled field-group">
+              <div class="field-row">
+                <div class="field">
+                  <label>Latitude (deg)</label>
+                  <div style="display:flex;gap:6px"><input type="number" id="latitude" value="35.0" step="0.1" min="-90" max="90"><button class="gps-btn" onclick="getLatLon()">GPS</button></div>
+                </div>
+                <div class="field"><label>Azimuth (deg true)</label><input type="number" id="azimuth" value="0" step="1" min="0" max="360"></div>
+              </div>
+              <div class="field"><label>Hemisphere</label><select id="hemisphere"><option value="1">Northern</option><option value="-1">Southern</option></select></div>
+              <div id="cor-info" class="sg-result" style="font-size:10px;color:var(--stone)">Coriolis columns added to range card when calculated</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="toggle-row">
+              <span class="toggle-label"><span style="width:3px;height:14px;background:var(--amber);border-radius:2px;display:inline-block;flex-shrink:0"></span>Angled Fire</span>
+              <label class="toggle"><input type="checkbox" id="angle-enable" onchange="toggleAngle()"><span class="slider"></span></label>
+            </div>
+            <div id="angle-section" class="section-disabled field-group">
+              <div class="field-row">
+                <div class="field">
+                  <label>Angle (degrees)</label>
+                  <input type="number" id="fire-angle" value="0" step="1" min="-90" max="90" placeholder="+ uphill / - downhill">
+                </div>
+                <div class="field">
+                  <label>Range Type</label>
+                  <select id="range-type">
+                    <option value="slant">Slant (laser) range</option>
+                    <option value="horizontal">True horizontal range</option>
+                  </select>
+                </div>
+              </div>
+              <div id="angle-info" class="sg-result" style="font-size:10px;color:var(--stone)">Corrected hold shown in range card. Both uphill and downhill reduce required elevation.</div>
+            </div>
           </div>
         </div>
         <div class="card">
@@ -404,6 +442,162 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.97);backdrop-fi
         <div class="empty-title">No profiles saved yet</div>
         <div style="font-size:13px;margin-top:8px;color:#6b6358">Set up your rifle in the calculator then click Save Current Setup</div>
       </div>
+    </div>
+  </div>
+
+
+  <!-- HUD PANEL -->
+  <div id="panel-hud" class="panel">
+    <div style="max-width:600px;margin:0 auto">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--stone);letter-spacing:0.15em;text-transform:uppercase;text-align:center;margin-bottom:16px">Quick Field Reference — Uses Active Calculator Profile</div>
+      <input type="number" class="hud-range-input" id="hud-range" value="500" step="25" oninput="updateHUD()" placeholder="Range (yds)">
+      <div class="hud-display">
+        <div class="hud-label">Elevation Hold</div>
+        <div class="hud-val" id="hud-elev">--</div>
+        <div class="hud-sub" id="hud-elev-unit">MOA UP</div>
+      </div>
+      <div class="hud-grid">
+        <div class="hud-box">
+          <div class="hud-box-val" id="hud-wind">--</div>
+          <div class="hud-box-lbl">Wind (<span id="hud-wind-spd">10</span> mph)</div>
+        </div>
+        <div class="hud-box">
+          <div class="hud-box-val" id="hud-vel">--</div>
+          <div class="hud-box-lbl">Velocity (fps)</div>
+        </div>
+        <div class="hud-box">
+          <div class="hud-box-val" id="hud-tof">--</div>
+          <div class="hud-box-lbl">Time of Flight (s)</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button class="btn-secondary" onclick="hudUnits('moa')" id="hud-btn-moa" style="border-color:var(--wheat);color:var(--wheat)">MOA</button>
+        <button class="btn-secondary" onclick="hudUnits('mils')" id="hud-btn-mils">MILS</button>
+        <button class="btn-secondary" onclick="hudUnits('inches')" id="hud-btn-inches">Inches</button>
+      </div>
+      <div id="hud-warning" style="display:none;font-family:'JetBrains Mono',monospace;font-size:10px;color:#c97b7b;text-align:center;margin-top:12px;padding:8px;background:rgba(201,123,123,0.1);border:1px solid rgba(201,123,123,0.3);border-radius:4px">&#9888; TRANSONIC ZONE — Bullet may destabilize near this range</div>
+      <div id="hud-no-data" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--stone);text-align:center;margin-top:16px;display:none">Calculate a range card first to enable HUD mode</div>
+    </div>
+  </div>
+
+  <!-- DOPE BOOK PANEL -->
+  <div id="panel-dope" class="panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--cream)">DOPE Book</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--stone);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px">Data On Previous Engagements — Personal Shot Log</div>
+      </div>
+      <button class="btn-calc" style="width:auto;padding:10px 20px;margin:0" onclick="showDopeForm()">+ Log Shot</button>
+    </div>
+    <div id="dope-form" style="display:none" class="card">
+      <div class="section-title">Log New Shot</div>
+      <div class="field-group">
+        <div class="field-row">
+          <div class="field"><label>Date</label><input type="date" id="dope-date"></div>
+          <div class="field"><label>Rifle / Load</label><input type="text" id="dope-rifle" placeholder="e.g. 6.5 CM 140gr ELD-M"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Range (yds)</label><input type="number" id="dope-range" value="500" step="25"></div>
+          <div class="field"><label>Units</label><select id="dope-units"><option value="moa">MOA</option><option value="mils">MILS</option></select></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Predicted Elevation</label><input type="number" id="dope-pred-elev" step="0.01" placeholder="From range card"></div>
+          <div class="field"><label>Actual Elevation (dialed)</label><input type="number" id="dope-actual-elev" step="0.01" placeholder="What worked"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Predicted Wind</label><input type="number" id="dope-pred-wind" step="0.01" placeholder="From range card"></div>
+          <div class="field"><label>Actual Wind (dialed)</label><input type="number" id="dope-actual-wind" step="0.01" placeholder="What worked"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Temp (F)</label><input type="number" id="dope-temp" placeholder="59"></div>
+          <div class="field"><label>Altitude (ft)</label><input type="number" id="dope-alt" placeholder="0"></div>
+        </div>
+        <div class="field"><label>Notes</label><input type="text" id="dope-notes" placeholder="Wind conditions, group size, etc."></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-calc" style="margin:0" onclick="saveDopeEntry()">Save Entry</button>
+          <button class="btn-secondary" onclick="hideDopeForm()">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <div id="dope-filters" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
+    <div style="overflow-x:auto">
+      <table class="dope-table" id="dope-table">
+        <thead><tr><th>Date</th><th>Rifle / Load</th><th>Range</th><th>Pred Elev</th><th>Actual Elev</th><th>Delta</th><th>Pred Wind</th><th>Actual Wind</th><th>Temp</th><th>Alt</th><th>Notes</th><th></th></tr></thead>
+        <tbody id="dope-tbody"></tbody>
+      </table>
+    </div>
+    <div id="dope-empty" class="empty-state" style="display:none">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px;height:48px;opacity:0.3;margin-bottom:16px;display:block;margin-left:auto;margin-right:auto"><rect x="8" y="6" width="32" height="36" rx="3"/><path d="M16 16h16M16 22h16M16 28h10"/></svg>
+      <div class="empty-title">No shots logged yet</div>
+      <div style="font-size:13px;margin-top:8px;color:#6b6358">Click Log Shot to record your first DOPE entry</div>
+    </div>
+  </div>
+
+  <!-- TOOLS PANEL -->
+  <div id="panel-tools" class="panel">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+
+      <!-- SCOPE CLICK CALCULATOR -->
+      <div class="tool-card">
+        <div class="section-title">Scope Click Calculator</div>
+        <div class="field-group">
+          <div class="field-row">
+            <div class="field"><label>Correction Needed</label><input type="number" id="click-val" value="3.5" step="0.01" oninput="calcClicks()"></div>
+            <div class="field"><label>Unit</label><select id="click-unit" onchange="calcClicks()"><option value="moa">MOA</option><option value="mils">MILS</option><option value="inches">Inches</option></select></div>
+          </div>
+          <div class="field"><label>Range (yds)</label><input type="number" id="click-range" value="500" step="25" oninput="calcClicks()"></div>
+          <div id="click-results" class="click-table-wrap"></div>
+        </div>
+      </div>
+
+      <!-- MV TRUING TOOL -->
+      <div class="tool-card">
+        <div class="section-title">Muzzle Velocity Truing</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--stone);margin-bottom:12px;line-height:1.6">Shoot at a known distance and enter your actual impact point to back-calculate your true MV.</div>
+        <div class="field-group">
+          <div class="field-row">
+            <div class="field"><label>True Range (yds)</label><input type="number" id="true-range" value="500" step="25" oninput="calcTruing()"></div>
+            <div class="field"><label>BC (G7)</label><input type="number" id="true-bc" value="0.301" step="0.001" oninput="calcTruing()"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Stated MV (fps)</label><input type="number" id="true-mv" value="2650" step="10" oninput="calcTruing()"></div>
+            <div class="field"><label>Zero (yds)</label><input type="number" id="true-zero" value="100" step="25" oninput="calcTruing()"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Predicted Drop (MOA)</label><input type="number" id="true-pred" step="0.01" placeholder="From range card" oninput="calcTruing()"></div>
+            <div class="field"><label>Actual Impact (MOA)</label><input type="number" id="true-actual" step="0.01" placeholder="What you observed" oninput="calcTruing()"></div>
+          </div>
+          <div id="truing-result" class="true-result" style="display:none"></div>
+        </div>
+      </div>
+
+      <!-- UNIT CONVERTER -->
+      <div class="tool-card">
+        <div class="section-title">MOA / MILS Converter</div>
+        <div class="field-group">
+          <div class="field"><label>Range (yds)</label><input type="number" id="conv-range" value="500" step="25" oninput="calcConv()"></div>
+          <div class="field-row">
+            <div class="field"><label>MOA</label><input type="number" id="conv-moa" step="0.01" placeholder="Enter value" oninput="convFrom('moa')"></div>
+            <div class="field"><label>MILS</label><input type="number" id="conv-mils" step="0.001" placeholder="Enter value" oninput="convFrom('mils')"></div>
+          </div>
+          <div class="field"><label>Inches at Range</label><input type="number" id="conv-inches" step="0.1" placeholder="Enter value" oninput="convFrom('inches')" readonly style="opacity:0.6"></div>
+          <div id="conv-result" class="true-result" style="font-size:11px;line-height:2"></div>
+        </div>
+      </div>
+
+      <!-- BC TYPE CONVERTER -->
+      <div class="tool-card">
+        <div class="section-title">G1 / G7 BC Converter</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--stone);margin-bottom:12px;line-height:1.6">Convert between G1 and G7 ballistic coefficients using the standard form factor ratio.</div>
+        <div class="field-group">
+          <div class="field-row">
+            <div class="field"><label>G1 BC</label><input type="number" id="bc-g1" step="0.001" placeholder="e.g. 0.620" oninput="convertBC('g1')"></div>
+            <div class="field"><label>G7 BC</label><input type="number" id="bc-g7-conv" step="0.001" placeholder="e.g. 0.310" oninput="convertBC('g7')"></div>
+          </div>
+          <div id="bc-conv-result" class="true-result" style="display:none"></div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -912,6 +1106,323 @@ function renderProfiles(){
 }
 
 
+// ── HUD MODE ────────────────────────────────────────────────────────
+var hudUnitsActive = 'moa';
+
+function hudUnits(u){
+  hudUnitsActive = u;
+  document.querySelectorAll('[id^="hud-btn"]').forEach(function(b){ b.style.borderColor=''; b.style.color=''; });
+  var btn = document.getElementById('hud-btn-'+u);
+  if(btn){ btn.style.borderColor='var(--wheat)'; btn.style.color='var(--wheat)'; }
+  updateHUD();
+}
+
+function updateHUD(){
+  var range = parseFloat(document.getElementById('hud-range').value) || 500;
+  var noData = document.getElementById('hud-no-data');
+  var warn = document.getElementById('hud-warning');
+  if(!lastRows || !lastRows.length){
+    if(noData) noData.style.display='block';
+    return;
+  }
+  if(noData) noData.style.display='none';
+
+  // Interpolate from lastRows
+  var lo = null, hi = null;
+  for(var i=0; i<lastRows.length; i++){
+    if(parseInt(lastRows[i].range) <= range) lo = lastRows[i];
+    if(parseInt(lastRows[i].range) >= range && !hi) hi = lastRows[i];
+  }
+  var row = lo || hi || lastRows[lastRows.length-1];
+  if(lo && hi && lo !== hi){
+    var frac = (range - parseInt(lo.range)) / (parseInt(hi.range) - parseInt(lo.range));
+    var interpDrop = lo.drop + (hi.drop - lo.drop) * frac;
+    var interpVel = parseInt(lo.vel) + (parseInt(hi.vel) - parseInt(lo.vel)) * frac;
+    var interpTof = parseFloat(lo.time) + (parseFloat(hi.time) - parseFloat(lo.time)) * frac;
+    var interpDrift = parseFloat(lo.driftDisp) + (parseFloat(hi.driftDisp) - parseFloat(lo.driftDisp)) * frac;
+    var moa = range * 1.047 / 100;
+    var elev, wind;
+    if(hudUnitsActive==='moa'){ elev=(interpDrop/moa).toFixed(2); wind=interpDrift.toFixed(2); }
+    else if(hudUnitsActive==='mils'){ elev=(interpDrop*0.0254/(range*0.0009144)).toFixed(2); wind=(interpDrift*0.0254/(range*0.0009144) * 0.0254/(range*0.0009144)).toFixed(2); }
+    else { elev=interpDrop.toFixed(1); wind=interpDrift.toFixed(1); }
+    document.getElementById('hud-elev').textContent = elev;
+    document.getElementById('hud-vel').textContent = Math.round(interpVel);
+    document.getElementById('hud-tof').textContent = interpTof.toFixed(3);
+    document.getElementById('hud-wind').textContent = lo.driftDisp;
+    if(warn) warn.style.display = interpVel < 1340 ? 'block' : 'none';
+  } else if(row) {
+    var moa2 = parseInt(row.range) * 1.047 / 100;
+    var elev2;
+    if(hudUnitsActive==='moa'){ elev2=(row.drop/moa2).toFixed(2); }
+    else if(hudUnitsActive==='mils'){ elev2=(row.drop*0.0254/(parseInt(row.range)*0.0009144)).toFixed(2); }
+    else { elev2=row.drop.toFixed(1); }
+    document.getElementById('hud-elev').textContent = elev2;
+    document.getElementById('hud-vel').textContent = row.vel;
+    document.getElementById('hud-tof').textContent = row.time;
+    document.getElementById('hud-wind').textContent = row.driftDisp;
+    if(warn) warn.style.display = parseInt(row.vel) < 1340 ? 'block' : 'none';
+  }
+  document.getElementById('hud-elev-unit').textContent = hudUnitsActive.toUpperCase() + ' UP';
+  var wspd = document.getElementById('wind-speed');
+  if(wspd) document.getElementById('hud-wind-spd').textContent = wspd.value;
+}
+
+// ── DOPE BOOK ────────────────────────────────────────────────────────
+function getDope(){ try{ return JSON.parse(localStorage.getItem('dr_dope')||'[]'); }catch{ return []; } }
+function saveDope(d){ localStorage.setItem('dr_dope', JSON.stringify(d)); }
+
+function showDopeForm(){
+  var f = document.getElementById('dope-form');
+  if(f){ f.style.display='block'; }
+  // Pre-fill date
+  var dt = document.getElementById('dope-date');
+  if(dt && !dt.value){ dt.value = new Date().toISOString().split('T')[0]; }
+  // Pre-fill from calculator if available
+  var temp = document.getElementById('temp');
+  var alt = document.getElementById('altitude');
+  var dopeTemp = document.getElementById('dope-temp');
+  var dopeAlt = document.getElementById('dope-alt');
+  if(temp && dopeTemp && !dopeTemp.value) dopeTemp.value = temp.value;
+  if(alt && dopeAlt && !dopeAlt.value) dopeAlt.value = alt.value;
+}
+
+function hideDopeForm(){
+  var f = document.getElementById('dope-form');
+  if(f) f.style.display='none';
+}
+
+function saveDopeEntry(){
+  var g2 = function(id){ var el=document.getElementById(id); return el?el.value:''; };
+  var entry = {
+    id: Date.now(),
+    date: g2('dope-date') || new Date().toISOString().split('T')[0],
+    rifle: g2('dope-rifle'),
+    range: g2('dope-range'),
+    units: g2('dope-units'),
+    predElev: g2('dope-pred-elev'),
+    actualElev: g2('dope-actual-elev'),
+    predWind: g2('dope-pred-wind'),
+    actualWind: g2('dope-actual-wind'),
+    temp: g2('dope-temp'),
+    alt: g2('dope-alt'),
+    notes: g2('dope-notes')
+  };
+  var dope = getDope();
+  dope.unshift(entry);
+  saveDope(dope);
+  hideDopeForm();
+  renderDope();
+}
+
+function deleteDopeEntry(id){
+  if(!confirm('Delete this DOPE entry?')) return;
+  saveDope(getDope().filter(function(e){ return e.id !== id; }));
+  renderDope();
+}
+
+function renderDope(){
+  var entries = getDope();
+  var tbody = document.getElementById('dope-tbody');
+  var empty = document.getElementById('dope-empty');
+  var tbl = document.getElementById('dope-table');
+  if(!entries.length){
+    if(tbody) tbody.innerHTML='';
+    if(empty) empty.style.display='block';
+    if(tbl) tbl.style.display='none';
+    return;
+  }
+  if(empty) empty.style.display='none';
+  if(tbl) tbl.style.display='table';
+
+  // Render rifle filters
+  var rifles = ['All', ...new Set(entries.map(function(e){ return e.rifle; }).filter(Boolean))];
+  var filterDiv = document.getElementById('dope-filters');
+  if(filterDiv && filterDiv.children.length === 0){
+    rifles.forEach(function(r){
+      var btn = document.createElement('button');
+      btn.className = 'filter-btn' + (r==='All'?' active':'');
+      btn.textContent = r || 'Unnamed';
+      btn.onclick = function(){
+        document.querySelectorAll('#dope-filters .filter-btn').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        renderDopeTable(r==='All'?null:r);
+      };
+      filterDiv.appendChild(btn);
+    });
+  }
+  renderDopeTable(null);
+}
+
+function renderDopeTable(rifle){
+  var entries = getDope();
+  if(rifle) entries = entries.filter(function(e){ return e.rifle === rifle; });
+  var tbody = document.getElementById('dope-tbody');
+  if(!tbody) return;
+  tbody.innerHTML = entries.map(function(e){
+    var predE = parseFloat(e.predElev)||0, actE = parseFloat(e.actualElev)||0;
+    var delta = (actE - predE).toFixed(2);
+    var deltaColor = Math.abs(actE-predE) < 0.1 ? 'var(--sage)' : Math.abs(actE-predE) < 0.5 ? 'var(--wheat)' : '#c97b7b';
+    return '<tr>'
+      +'<td>'+e.date+'</td>'
+      +'<td>'+e.rifle+'</td>'
+      +'<td>'+e.range+' yds</td>'
+      +'<td>'+e.predElev+' '+e.units+'</td>'
+      +'<td>'+e.actualElev+' '+e.units+'</td>'
+      +'<td style="color:'+deltaColor+'">'+delta+'</td>'
+      +'<td>'+e.predWind+' '+e.units+'</td>'
+      +'<td>'+e.actualWind+' '+e.units+'</td>'
+      +'<td>'+(e.temp?e.temp+'F':'')+'</td>'
+      +'<td>'+(e.alt?e.alt+'ft':'')+'</td>'
+      +'<td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">'+e.notes+'</td>'
+      +'<td><button class="btn-icon danger" onclick="deleteDopeEntry('+e.id+')">&#10005;</button></td>'
+      +'</tr>';
+  }).join('');
+}
+
+// ── SCOPE CLICK CALCULATOR ───────────────────────────────────────────
+function calcClicks(){
+  var val = parseFloat(document.getElementById('click-val').value) || 0;
+  var unit = document.getElementById('click-unit').value;
+  var range = parseFloat(document.getElementById('click-range').value) || 500;
+  var inchesAtRange = range * 1.047 / 100;
+
+  // Convert input to inches
+  var inches;
+  if(unit==='moa') inches = val * inchesAtRange;
+  else if(unit==='mils') inches = val * range * 0.09144;
+  else inches = val;
+
+  var moa = inches / inchesAtRange;
+  var mils = inches / (range * 0.09144);
+
+  var scopes = [
+    {name:'1/4 MOA',div:0.25,u:'moa',clicks:Math.round(moa/0.25)},
+    {name:'1/8 MOA',div:0.125,u:'moa',clicks:Math.round(moa/0.125)},
+    {name:'1/2 MOA',div:0.5,u:'moa',clicks:Math.round(moa/0.5)},
+    {name:'0.1 MIL',div:0.1,u:'mils',clicks:Math.round(mils/0.1)},
+    {name:'0.05 MIL',div:0.05,u:'mils',clicks:Math.round(mils/0.05)},
+  ];
+
+  var wrap = document.getElementById('click-results');
+  if(!wrap) return;
+  wrap.innerHTML = '<table class="click-table">'
+    +'<tr><td style="color:var(--stone);font-size:10px" colspan="2">At '+range+' yds: '+moa.toFixed(2)+' MOA = '+mils.toFixed(3)+' MILS = '+inches.toFixed(2)+'"</td></tr>'
+    + scopes.map(function(s){
+      return '<tr><td>'+s.name+' scope</td><td>'+s.clicks+' clicks</td></tr>';
+    }).join('')
+    +'</table>';
+}
+
+// ── MV TRUING TOOL ───────────────────────────────────────────────────
+function calcTruing(){
+  var range = parseFloat(document.getElementById('true-range').value) || 500;
+  var bc = parseFloat(document.getElementById('true-bc').value) || 0.301;
+  var mv = parseFloat(document.getElementById('true-mv').value) || 2650;
+  var zero = parseFloat(document.getElementById('true-zero').value) || 100;
+  var pred = parseFloat(document.getElementById('true-pred').value);
+  var actual = parseFloat(document.getElementById('true-actual').value);
+  var el = document.getElementById('truing-result');
+  if(!el) return;
+  if(isNaN(pred) || isNaN(actual)){ el.style.display='none'; return; }
+
+  var delta = actual - pred;
+  var sign = delta > 0 ? 'MORE drop than predicted' : 'LESS drop than predicted';
+  var absDelta = Math.abs(delta);
+
+  // Estimate MV correction: each 50fps change in MV ≈ 0.5-1.0 MOA at 500yds
+  // Use iterative approach: if shooting low (more drop), MV is lower than stated
+  var mvCorr = mv + (delta < 0 ? 1 : -1) * (absDelta * 50 / 0.7);
+  mvCorr = Math.round(mvCorr / 5) * 5;
+
+  // BC correction estimate
+  var bcCorr = (bc * (1 - delta * 0.005)).toFixed(4);
+
+  el.style.display = 'block';
+  el.innerHTML = '<span style="color:var(--fog)">Observation: </span><span class="true-val">'+absDelta.toFixed(2)+' MOA '+sign+'</span><br>'
+    + '<span style="color:var(--fog)">Suggested MV: </span><span class="true-val">~'+mvCorr+' fps</span> <span style="color:var(--stone);font-size:10px">(was '+mv+' fps)</span><br>'
+    + '<span style="color:var(--fog)">Alt. BC correction: </span><span class="true-val">~'+bcCorr+'</span> <span style="color:var(--stone);font-size:10px">(was '+bc+')</span><br>'
+    + '<span style="color:var(--stone);font-size:10px">Verify at 2+ distances for accuracy. Atmosphere and zero error can also cause delta.</span>';
+}
+
+// ── UNIT CONVERTER ───────────────────────────────────────────────────
+function convFrom(from){
+  var range = parseFloat(document.getElementById('conv-range').value) || 500;
+  var moaEl = document.getElementById('conv-moa');
+  var milsEl = document.getElementById('conv-mils');
+  var inEl = document.getElementById('conv-inches');
+  var inchesAtRange = range * 1.047 / 100;
+  var val, moa, mils, inches;
+  if(from==='moa'){
+    val = parseFloat(moaEl.value);
+    if(isNaN(val)) return;
+    inches = val * inchesAtRange;
+    mils = inches / (range * 0.09144);
+    milsEl.value = mils.toFixed(3);
+    inEl.value = inches.toFixed(2);
+  } else if(from==='mils'){
+    val = parseFloat(milsEl.value);
+    if(isNaN(val)) return;
+    inches = val * range * 0.09144;
+    moa = inches / inchesAtRange;
+    moaEl.value = moa.toFixed(2);
+    inEl.value = inches.toFixed(2);
+  }
+  var result = document.getElementById('conv-result');
+  if(result){
+    moa = parseFloat(moaEl.value)||0;
+    mils = parseFloat(milsEl.value)||0;
+    inches = parseFloat(inEl.value)||0;
+    result.innerHTML = '<span style="color:var(--stone)">At '+range+' yds:</span><br>'
+      +'1 MOA = <span style="color:var(--wheat)">'+inchesAtRange.toFixed(3)+'"</span><br>'
+      +'1 MIL = <span style="color:var(--wheat)">'+(range*0.09144).toFixed(2)+'"</span><br>'
+      +'<span style="color:var(--wheat)">'+moa.toFixed(2)+'</span> MOA = <span style="color:var(--wheat)">'+mils.toFixed(3)+'</span> MILS = <span style="color:var(--wheat)">'+inches.toFixed(2)+'"</span>';
+  }
+}
+
+function calcConv(){ convFrom(document.getElementById('conv-moa').value ? 'moa' : 'mils'); }
+
+// ── BC CONVERTER ─────────────────────────────────────────────────────
+function convertBC(from){
+  var g1El = document.getElementById('bc-g1');
+  var g7El = document.getElementById('bc-g7-conv');
+  var res = document.getElementById('bc-conv-result');
+  var ratio = 0.505; // standard G1 to G7 conversion factor for typical match bullets
+  if(from==='g1'){
+    var v = parseFloat(g1El.value);
+    if(isNaN(v)){ res.style.display='none'; return; }
+    g7El.value = (v * ratio).toFixed(4);
+    res.style.display='block';
+    res.innerHTML = 'G1 <span class="true-val">'+v+'</span> &rarr; G7 <span class="true-val">'+(v*ratio).toFixed(4)+'</span><br><span style="color:var(--stone);font-size:10px">Using standard 0.505 ratio. Actual ratio varies by bullet shape (0.47–0.55).</span>';
+  } else {
+    var v2 = parseFloat(g7El.value);
+    if(isNaN(v2)){ res.style.display='none'; return; }
+    g1El.value = (v2 / ratio).toFixed(4);
+    res.style.display='block';
+    res.innerHTML = 'G7 <span class="true-val">'+v2+'</span> &rarr; G1 <span class="true-val">'+(v2/ratio).toFixed(4)+'</span><br><span style="color:var(--stone);font-size:10px">Using standard 0.505 ratio. Actual ratio varies by bullet shape (0.47–0.55).</span>';
+  }
+}
+
+
+function toggleAdvanced(){
+  var section = document.getElementById('adv-section');
+  var btn = document.getElementById('adv-toggle-btn');
+  if(!section || !btn) return;
+  var isOpen = section.classList.contains('open');
+  section.classList.toggle('open', !isOpen);
+  btn.classList.toggle('active', !isOpen);
+  localStorage.setItem('dr_adv_open', (!isOpen).toString());
+}
+
+function initAdvanced(){
+  // Restore advanced section state from localStorage
+  if(localStorage.getItem('dr_adv_open') === 'true'){
+    var section = document.getElementById('adv-section');
+    var btn = document.getElementById('adv-toggle-btn');
+    if(section) section.classList.add('open');
+    if(btn) btn.classList.add('active');
+  }
+}
+
 function buildDB(){
   const sel=g('bullet-select');
   BULLETS.forEach((b,i)=>{const o=document.createElement('option');o.value=i;o.textContent=b.mfr+' - '+b.name;sel.appendChild(o);});
@@ -991,13 +1502,16 @@ function showPanel(id){
   g('panel-'+id).classList.add('active');
   document.querySelectorAll('.nav-tab').forEach(t=>{
     const txt=t.textContent.toLowerCase().trim();
-    if((id==='calculator'&&txt.includes('calc'))||(id==='database'&&txt.includes('database'))||(id==='favorites'&&txt.includes('fav'))||(id==='wind'&&txt.includes('wind'))||(id==='profiles'&&txt.includes('profile')))t.classList.add('active');
+    if((id==='calculator'&&txt.includes('calc'))||(id==='database'&&txt.includes('database'))||(id==='favorites'&&txt.includes('fav'))||(id==='wind'&&txt.includes('wind'))||(id==='profiles'&&txt.includes('profile'))||(id==='hud'&&txt.includes('hud'))||(id==='dope'&&txt.includes('dope'))||(id==='tools'&&txt.includes('tools')))t.classList.add('active');
   });
   if(id==='favorites')renderFavs();
   if(id==='profiles')renderProfiles();
+  if(id==='dope')renderDope();
+  if(id==='hud')updateHUD();
+  if(id==='tools'){calcClicks();calcConv();}
 }
 
-buildDB();calcWind();
+buildDB();calcWind();initAdvanced();
 </script>
 </body>
 </html>
