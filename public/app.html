@@ -90,20 +90,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.97);backdrop-fi
 .results-toolbar{display:flex;gap:8px;margin-bottom:16px;justify-content:flex-end}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--soil);border-radius:3px}
 @media(max-width:768px){.calc-grid{grid-template-columns:1fr}.stat-grid{grid-template-columns:repeat(2,1fr)}.wind-grid{grid-template-columns:1fr}nav{padding:0 16px}.nav-tabs{display:none}}
-.toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.toggle-label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--wheat);display:flex;align-items:center;gap:8px}
-.toggle{position:relative;width:40px;height:22px;flex-shrink:0}
-.toggle input{opacity:0;width:0;height:0;position:absolute}
-.slider{position:absolute;cursor:pointer;inset:0;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:22px;transition:.3s}
-.slider:before{position:absolute;content:"";height:16px;width:16px;left:2px;bottom:2px;background:var(--stone);border-radius:50%;transition:.3s}
-.toggle input:checked + .slider{background:rgba(196,169,107,0.2);border-color:var(--wheat)}
-.toggle input:checked + .slider:before{transform:translateX(18px);background:var(--wheat)}
-.section-disabled{opacity:0.35;pointer-events:none}
-.gps-btn{padding:5px 10px;background:none;border:1px solid rgba(122,140,110,0.4);border-radius:4px;color:var(--sage);font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;white-space:nowrap;flex-shrink:0}
-.gps-btn:hover{background:rgba(122,140,110,0.1)}
-.sg-result{font-family:'JetBrains Mono',monospace;font-size:11px;padding:8px 12px;background:rgba(0,0,0,0.2);border-radius:4px;border:1px solid var(--border);margin-top:8px;color:var(--fog);line-height:1.6}
-.sg-stable{color:#7a8c6e}.sg-marginal{color:#c4a96b}.sg-unstable{color:#c97b7b}
-.info-tag{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sage);margin-top:4px;display:none}
+
 .toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .toggle-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone)}
 .toggle{position:relative;width:40px;height:22px;flex-shrink:0}
@@ -210,73 +197,6 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.97);backdrop-fi
             </div>
           </div>
         </div>
-        <div class="card">
-          <div class="toggle-row">
-            <span class="toggle-label" style="color:var(--wheat);font-size:11px;display:flex;align-items:center;gap:8px"><span style="width:3px;height:14px;background:var(--amber);border-radius:2px;display:inline-block"></span>Spin & Stability</span>
-            <label class="toggle"><input type="checkbox" id="sg-enable" onchange="toggleSG()"><span class="slider"></span></label>
-          </div>
-          <div id="sg-section" class="section-disabled">
-            <div class="field-group">
-              <div class="field-row">
-                <div class="field">
-                  <label>Twist Rate (in/rev)</label>
-                  <input type="number" id="twist" value="10" step="0.5" min="5" max="20" oninput="calcSG()">
-                </div>
-                <div class="field">
-                  <label>Twist Direction</label>
-                  <select id="twist-dir" onchange="calcSG()">
-                    <option value="1">Right Hand (RH)</option>
-                    <option value="-1">Left Hand (LH)</option>
-                  </select>
-                </div>
-              </div>
-              <div class="field-row">
-                <div class="field">
-                  <label>Bullet Length (in)</label>
-                  <input type="number" id="bullet-length" value="1.35" step="0.01" min="0.5" max="3.0" oninput="calcSG()">
-                </div>
-                <div class="field">
-                  <label>Bullet Diameter (in)</label>
-                  <input type="number" id="sg-dia" value="0.308" step="0.001" oninput="calcSG()">
-                </div>
-              </div>
-              <div id="sg-result" class="sg-result" style="display:none"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="toggle-row">
-            <span class="toggle-label" style="color:var(--wheat);font-size:11px;display:flex;align-items:center;gap:8px"><span style="width:3px;height:14px;background:var(--amber);border-radius:2px;display:inline-block"></span>Coriolis Effect</span>
-            <label class="toggle"><input type="checkbox" id="cor-enable" onchange="toggleCoriolis()"><span class="slider"></span></label>
-          </div>
-          <div id="cor-section" class="section-disabled">
-            <div class="field-group">
-              <div class="field-row">
-                <div class="field">
-                  <label>Latitude (deg)</label>
-                  <div style="display:flex;gap:6px;align-items:center">
-                    <input type="number" id="latitude" value="35.0" step="0.1" min="-90" max="90" style="flex:1">
-                    <button class="gps-btn" onclick="getLatLon()">&#128205; GPS</button>
-                  </div>
-                </div>
-                <div class="field">
-                  <label>Azimuth (deg true)</label>
-                  <input type="number" id="azimuth" value="0" step="1" min="0" max="360">
-                </div>
-              </div>
-              <div class="field">
-                <label>Hemisphere</label>
-                <select id="hemisphere">
-                  <option value="1">Northern</option>
-                  <option value="-1">Southern</option>
-                </select>
-              </div>
-              <div id="cor-info" class="sg-result" style="font-size:10px;color:var(--stone)">Enable to see Coriolis deflection added to range card</div>
-            </div>
-          </div>
-        </div>
-
         <div class="card">
           <div class="toggle-row">
             <span class="toggle-label"><span style="width:3px;height:14px;background:var(--amber);border-radius:2px;display:inline-block;flex-shrink:0"></span>Spin &amp; Stability</span>
@@ -710,6 +630,11 @@ function printWind(){
 }
 
 // DATABASE
+function toggleCoriolis(){
+  var en=document.getElementById('cor-enable').checked;
+  document.getElementById('cor-section').classList.toggle('section-disabled',!en);
+}
+
 function toggleSG(){
   const en=document.getElementById('sg-enable').checked;
   document.getElementById('sg-section').classList.toggle('section-disabled',!en);
