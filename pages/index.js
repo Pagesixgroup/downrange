@@ -306,40 +306,53 @@ function showPanel(id){
   });
 }
 
-function airDensityRatio(altFt,tempF){return Math.exp(-altFt*0.3048/8435)*(518.67/(tempF+459.67));}
-function g7Cd(mach){if(mach>1.8)return 0.2303;if(mach>1.4)return 0.2303+(1.8-mach)*0.04;if(mach>1.2)return 0.2700+(1.4-mach)*0.12;if(mach>0.8)return 0.2950+(1.2-mach)*0.09;return 0.3350;}
-
 function calculateTrajectory(p){
-  const rho=airDensityRatio(p.altFt,p.tempF);
-  const bcG7=p.bcType==='G1'?p.bc*0.505:p.bc;
-  const sos=1116.45*Math.sqrt((p.tempF+459.67)/518.67);
-  const windFactor=Math.abs(Math.sin(p.windClock*Math.PI/6));
-  const windMs=p.windMph*0.44704*windFactor;
+  const mv=p.mv*0.3048,G=9.80665;
+  const sos=1116.45*Math.sqrt((p.tempF+459.67)/518.67)*0.3048;
+  const rhoRatio=Math.exp(-p.altFt*0.3048/8435)*(518.67/(p.tempF+459.67));
+  const bcG7=(p.bcType==='G1'?p.bc*0.505:p.bc)*703.07;
+  const windMs=p.windMph*0.44704*Math.abs(Math.sin(p.windClock*Math.PI/6));
+  const sightM=p.sightHt*0.0254;
   const dt=0.001;
-  let tx=p.mv*0.3048,ty=0,tx2=0,ty2=-p.sightHt*0.0254,zeroCorr=0;
-  for(let s=0;s<80000;s++){
-    const v=Math.sqrt(tx*tx+ty*ty),mach=v/sos,cd=g7Cd(mach)/bcG7*rho;
-    tx+=(-cd*tx*v)*dt;ty+=(-9.80665-cd*ty*v)*dt;tx2+=tx*dt;ty2+=ty*dt;
-    if(tx2/0.9144>=p.zeroYds){zeroCorr=ty2;break;}
+  function retard(v){
+    const mach=v/sos;
+    let cd;
+    if(mach>=1.8)cd=0.2303;
+    else if(mach>=1.4)cd=0.2303+(1.8-mach)/0.4*0.0348;
+    else if(mach>=1.2)cd=0.2651+(1.4-mach)/0.2*0.0304;
+    else if(mach>=0.9)cd=0.2955+(1.2-mach)/0.3*0.0055;
+    else cd=0.3010;
+    return 1.2250*rhoRatio*cd*v*v/(2*bcG7);
   }
-  let vx=p.mv*0.3048,vy=0,x=0,y=-p.sightHt*0.0254,t=0,drift=0;
+  let lo=-0.01,hi=0.05;
+  for(let iter=0;iter<50;iter++){
+    const mid=(lo+hi)/2;
+    let vx=mv*Math.cos(mid),vy=mv*Math.sin(mid),x=0,y=-sightM;
+    for(let i=0;i<100000;i++){
+      const v=Math.sqrt(vx*vx+vy*vy);if(v<100)break;
+      const a=retard(v);
+      vx+=-a*vx/v*dt;vy+=(-G-a*vy/v)*dt;x+=vx*dt;y+=vy*dt;
+      if(x/0.9144>=p.zeroYds){if(y>0)hi=mid;else lo=mid;break;}
+    }
+  }
+  const ang=(lo+hi)/2;
+  let vx=mv*Math.cos(ang),vy=mv*Math.sin(ang),x=0,y=-sightM,t=0,drift=0;
   const results=[],next=[p.startYd];
-  for(let s=0;s<200000;s++){
-    const v=Math.sqrt(vx*vx+vy*vy),mach=v/sos,cd=g7Cd(mach)/bcG7*rho,ay=-9.80665-cd*vy*v;
-    vx+=(-cd*vx*v)*dt;vy+=ay*dt;x+=vx*dt;y+=vy*dt;drift+=windMs*dt;t+=dt;
+  for(let i=0;i<200000;i++){
+    const v=Math.sqrt(vx*vx+vy*vy);if(v<100)break;
+    const a=retard(v);
+    vx+=-a*vx/v*dt;vy+=(-G-a*vy/v)*dt;x+=vx*dt;y+=vy*dt;t+=dt;drift+=windMs*dt;
     const xYds=x/0.9144;
     if(xYds>=next[0]){
-      const dropIn=(y-(xYds/p.zeroYds)*zeroCorr)*(1/0.0254);
-      const driftIn=drift*(1/0.0254);
+      const dropIn=-y/0.0254,driftIn=drift/0.0254;
       const velFps=v/0.3048;
-      const energy=0.5*(p.wt/7000)*velFps*velFps/32.174*2;
-      const moa=val=>val/(xYds*1.047/100);
-      const mils=val=>val/(xYds*0.09144);
+      const energy=(0.5*(p.wt/7000/2.20462)*v*v/1.35582).toFixed(0);
+      const moa=xYds*1.047/100;
       let dd,dr;
-      if(p.units==='moa'){dd=moa(dropIn).toFixed(2);dr=moa(driftIn).toFixed(2);}
-      else if(p.units==='mils'){dd=mils(dropIn*0.0254).toFixed(2);dr=mils(driftIn*0.0254).toFixed(2);}
+      if(p.units==='moa'){dd=(dropIn/moa).toFixed(2);dr=(driftIn/moa).toFixed(2);}
+      else if(p.units==='mils'){dd=(dropIn*0.0254/(xYds*0.0009144)).toFixed(2);dr=(driftIn*0.0254/(xYds*0.0009144)).toFixed(2);}
       else{dd=dropIn.toFixed(1);dr=driftIn.toFixed(1);}
-      results.push({range:xYds.toFixed(0),drop:dropIn,dropDisp:dd,driftDisp:dr,vel:velFps.toFixed(0),energy:energy.toFixed(0),time:t.toFixed(3),isZero:Math.abs(xYds-p.zeroYds)<(p.stepYd/2)});
+      results.push({range:Math.round(xYds),drop:dropIn,dropDisp:dd,driftDisp:dr,vel:velFps.toFixed(0),energy,time:t.toFixed(3),isZero:Math.abs(xYds-p.zeroYds)<p.stepYd/2});
       next[0]+=p.stepYd;
       if(xYds>=p.stopYd)break;
     }
