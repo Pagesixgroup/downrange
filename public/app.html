@@ -89,6 +89,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.97);backdrop-fi
 .empty-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--fog);margin-bottom:8px}
 .results-toolbar{display:flex;gap:8px;margin-bottom:16px;justify-content:flex-end}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--soil);border-radius:3px}
+.profile-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;transition:all 0.2s;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer}
+.profile-card:hover{border-color:var(--border-bright)}
+.profile-card.active-profile{border-color:var(--wheat);background:rgba(196,169,107,0.05)}
+.profile-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--cream)}
+.profile-meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--stone);margin-top:3px;letter-spacing:0.05em}
+.profile-actions{display:flex;gap:6px;flex-shrink:0}
+.btn-icon{width:28px;height:28px;background:none;border:1px solid var(--border);border-radius:4px;cursor:pointer;color:var(--stone);font-size:12px;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.btn-icon:hover{border-color:var(--wheat);color:var(--wheat)}
+.btn-icon.danger:hover{border-color:#c97b7b;color:#c97b7b}
+.transonic-row td{background:rgba(201,123,123,0.08)!important;color:#c97b7b!important}
+.transonic-badge{font-family:'JetBrains Mono',monospace;font-size:9px;padding:1px 6px;background:rgba(201,123,123,0.15);border:1px solid rgba(201,123,123,0.3);border-radius:3px;color:#c97b7b;margin-left:6px;vertical-align:middle}
+.spin-col{color:var(--sage)!important}
 @media(max-width:768px){.calc-grid{grid-template-columns:1fr}.stat-grid{grid-template-columns:repeat(2,1fr)}.wind-grid{grid-template-columns:1fr}nav{padding:0 16px}.nav-tabs{display:none}}
 
 .toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
@@ -131,6 +143,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.97);backdrop-fi
     <button class="nav-tab" onclick="showPanel('database')">Bullet Database</button>
     <button class="nav-tab" onclick="showPanel('favorites')">&#9733; Favorites</button>
     <button class="nav-tab" onclick="showPanel('wind')">Wind Calls</button>
+    <button class="nav-tab" onclick="showPanel('profiles')">&#9881; Profiles</button>
   </div>
 </nav>
 
@@ -229,6 +242,28 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.97);backdrop-fi
             </div>
             <div class="field"><label>Hemisphere</label><select id="hemisphere"><option value="1">Northern</option><option value="-1">Southern</option></select></div>
             <div id="cor-info" class="sg-result" style="font-size:10px;color:var(--stone)">Coriolis columns added to range card when calculated</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="toggle-row">
+            <span class="toggle-label"><span style="width:3px;height:14px;background:var(--amber);border-radius:2px;display:inline-block;flex-shrink:0"></span>Angled Fire</span>
+            <label class="toggle"><input type="checkbox" id="angle-enable" onchange="toggleAngle()"><span class="slider"></span></label>
+          </div>
+          <div id="angle-section" class="section-disabled field-group">
+            <div class="field-row">
+              <div class="field">
+                <label>Angle (degrees)</label>
+                <input type="number" id="fire-angle" value="0" step="1" min="-90" max="90" placeholder="+ uphill / - downhill">
+              </div>
+              <div class="field">
+                <label>Range Type</label>
+                <select id="range-type">
+                  <option value="slant">Slant (laser) range</option>
+                  <option value="horizontal">True horizontal range</option>
+                </select>
+              </div>
+            </div>
+            <div id="angle-info" class="sg-result" style="font-size:10px;color:var(--stone)">Corrected hold shown in range card. Both uphill and downhill reduce required elevation.</div>
           </div>
         </div>
         <div class="card">
@@ -350,6 +385,28 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.97);backdrop-fi
       </div>
     </div>
   </div>
+
+  <!-- PROFILES PANEL -->
+  <div id="panel-profiles" class="panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--cream)">Gun &amp; Load Profiles</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--stone);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px">Save and load complete rifle configurations</div>
+      </div>
+      <button class="btn-calc" style="width:auto;padding:10px 20px;margin:0" onclick="saveProfile()">+ Save Current Setup</button>
+    </div>
+    <div id="profiles-list" style="display:flex;flex-direction:column;gap:10px"></div>
+    <div id="profiles-empty" style="display:none">
+      <div class="empty-state">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px;height:48px;opacity:0.3;margin-bottom:16px;display:block;margin-left:auto;margin-right:auto">
+          <rect x="8" y="6" width="32" height="36" rx="3"/><path d="M16 16h16M16 22h16M16 28h10"/>
+        </svg>
+        <div class="empty-title">No profiles saved yet</div>
+        <div style="font-size:13px;margin-top:8px;color:#6b6358">Set up your rifle in the calculator then click Save Current Setup</div>
+      </div>
+    </div>
+  </div>
+
 
 </div>
 
@@ -568,17 +625,35 @@ function calculateTrajectory(p){
 }
 
 function calculate(){
-  // sync sg-dia with bullet diameter
   var sgDia=document.getElementById('sg-dia');
   var dia=document.getElementById('diameter');
-  if(sgDia&&dia&&!document.getElementById('sg-enable').checked)sgDia.value=dia.value;
+  if(sgDia&&dia)sgDia.value=dia.value;
+  var angleEnabled=document.getElementById('angle-enable').checked;
+  var angleDeg=angleEnabled?(parseFloat(document.getElementById('fire-angle').value)||0):0;
   const units=gs('output-units');
   const params={bc:gv('bc-value'),bcType:gs('bc-type'),wt:gv('weight'),mv:gv('mv'),zeroYds:gv('zero'),sightHt:gv('sight-height'),tempF:gv('temp'),altFt:gv('altitude'),windMph:gv('wind-speed'),windClock:parseFloat(gs('wind-dir'))||3,startYd:gv('range-start'),stopYd:gv('range-stop'),stepYd:gv('range-step'),units};
   const rows=calculateTrajectory(params);
   if(!rows.length)return;
   lastRows=rows; lastParams=params;
   const ul=units==='moa'?'MOA':units==='mils'?'MILS':'IN',lr=rows[rows.length-1];
-  g('results').innerHTML='<div class="stat-grid"><div class="stat-box"><div class="stat-val">'+params.mv+'</div><div class="stat-label">MV (fps)</div></div><div class="stat-box"><div class="stat-val">'+params.bc+'</div><div class="stat-label">BC ('+params.bcType+')</div></div><div class="stat-box"><div class="stat-val">'+lr.vel+'</div><div class="stat-label">Vel @ '+lr.range+'yds</div></div><div class="stat-box"><div class="stat-val">'+lr.energy+'</div><div class="stat-label">Energy @ '+lr.range+'yds</div></div></div><div class="card" style="padding:0;overflow:hidden"><table class="range-card-table"><thead><tr><th>Range (yds)</th><th>Drop ('+ul+')</th><th>Wind ('+ul+')</th><th>Vel (fps)</th><th>Energy (ft-lbf)</th><th>ToF (s)</th></tr></thead><tbody>'+rows.map(function(r,i){var corEnabled=document.getElementById('cor-enable').checked;var cc='';if(corEnabled){var lat=parseFloat(document.getElementById('latitude').value)||35,az=parseFloat(document.getElementById('azimuth').value)||0,hemi=parseFloat(document.getElementById('hemisphere').value)||1;var cd=coriolisDeflection(r.range,parseFloat(r.time),lat,az,hemi);cc='<td>'+cd.h.toFixed(1)+'"</td><td>'+cd.v.toFixed(1)+'"</td>';}return '<tr><td class="'+(r.isZero?'zero':'')+'">'+r.range+'</td><td class="'+(r.drop>0.5?'neg':'zero')+'">'+r.dropDisp+'</td><td>'+r.driftDisp+'</td><td>'+r.vel+'</td><td>'+r.energy+'</td><td>'+r.time+'</td>'+cc+'</tr>';}).join('')+'</tbody></table></div>';
+  g('results').innerHTML='<div class="stat-grid"><div class="stat-box"><div class="stat-val">'+params.mv+'</div><div class="stat-label">MV (fps)</div></div><div class="stat-box"><div class="stat-val">'+params.bc+'</div><div class="stat-label">BC ('+params.bcType+')</div></div><div class="stat-box"><div class="stat-val">'+lr.vel+'</div><div class="stat-label">Vel @ '+lr.range+'yds</div></div><div class="stat-box"><div class="stat-val">'+lr.energy+'</div><div class="stat-label">Energy @ '+lr.range+'yds</div></div></div><div class="card" style="padding:0;overflow:hidden"><table class="range-card-table"><thead><tr><th>Range (yds)</th><th>Drop ('+ul+')</th>'+(angleEnabled?'<th>Angled ('+ul+')</th>':'')+'<th>Wind ('+ul+')</th>'+(document.getElementById('sg-enable').checked?'<th>Spin (in)</th>':'')+'<th>Vel (fps)</th><th>Energy</th><th>ToF</th>'+(document.getElementById('cor-enable').checked?'<th>Cor H</th><th>Cor V</th>':'')+'</tr></thead><tbody>'+rows'+rows.map(function(r,i){var corEnabled=document.getElementById('cor-enable').checked;var cc='';if(corEnabled){var lat=parseFloat(document.getElementById('latitude').value)||35,az=parseFloat(document.getElementById('azimuth').value)||0,hemi=parseFloat(document.getElementById('hemisphere').value)||1;var cd=coriolisDeflection(r.range,parseFloat(r.time),lat,az,hemi);cc='<td>'+cd.h.toFixed(1)+'"</td><td>'+cd.v.toFixed(1)+'"</td>';}var moa=r.range*1.047/100;
+    var dropForAngle=params.units==='moa'?r.drop/moa:params.units==='mils'?r.drop*0.0254/(r.range*0.0009144):r.drop;
+    var angledHold=(dropForAngle*Math.cos(Math.abs(angleDeg)*Math.PI/180)).toFixed(params.units==='inches'?1:2);
+    var sgOn=document.getElementById('sg-enable').checked;
+    var sgEl=document.getElementById('sg-result');
+    var sgVal=sgOn&&sgEl?parseFloat((sgEl.textContent||'').match(/Sg = ([\d.]+)/)?.[1])||1.5:1.5;
+    var twDir=sgOn?(parseFloat(document.getElementById('twist-dir').value)||1):1;
+    var tof=parseFloat(r.time);
+    var sd=(1.25*(sgVal+1.2)*Math.pow(tof,1.83)*twDir);
+    var sdDisp=(sd>=0?'+':'')+sd.toFixed(1);
+    var isTrans=parseFloat(r.vel)<1340;
+    return '<tr'+(isTrans?' class="transonic-row"':'')+'>'+
+      '<td class="'+(r.isZero?'zero':'')+'">'+r.range+(isTrans?'<span class="transonic-badge">T</span>':'')+'</td>'+
+      '<td class="'+(r.drop>0.5?'neg':'zero')+'">'+r.dropDisp+'</td>'+
+      (angleEnabled?'<td>'+angledHold+'</td>':'')+
+      '<td>'+r.driftDisp+'</td>'+
+      (sgOn?'<td class="spin-col">'+sdDisp+'"</td>':'')+
+      '<td>'+r.vel+'</td><td>'+r.energy+'</td><td>'+r.time+'</td>'+cc+'</tr>';}).join('')+'</tbody></table></div>';
   g('results-toolbar').style.display='flex';
 }
 
@@ -724,6 +799,119 @@ function getLatLon(){
   },function(){btn.textContent='GPS';alert('GPS denied');});
 }
 
+// ── ANGLED FIRE ─────────────────────────────────────────────────────
+function toggleAngle(){
+  var en=document.getElementById('angle-enable').checked;
+  document.getElementById('angle-section').classList.toggle('section-disabled',!en);
+}
+
+function angledHoldCorrection(holdMOA, angleDeg){
+  // Rifleman's Rule: corrected hold = hold * cos(angle)
+  // Works for both uphill and downhill
+  var rad = Math.abs(angleDeg) * Math.PI / 180;
+  return holdMOA * Math.cos(rad);
+}
+
+function slantToHorizontal(slantYds, angleDeg){
+  var rad = angleDeg * Math.PI / 180;
+  return slantYds * Math.cos(rad);
+}
+
+// ── SPIN DRIFT (Litz formula) ────────────────────────────────────────
+function spinDrift(tof, stabilityFactor, twistDir){
+  // Litz approximation: drift (inches) = 1.25 * (Sg + 1.2) * tof^1.83
+  // twistDir: 1 = RH (drift right), -1 = LH (drift left)
+  if(!document.getElementById('sg-enable').checked) return 0;
+  var sg = parseFloat((document.getElementById('sg-result').textContent||'').match(/[\d.]+/)||[1.5]);
+  if(isNaN(sg)) sg = 1.5;
+  var drift_in = 1.25 * (sg + 1.2) * Math.pow(tof, 1.83);
+  var dir = parseFloat(document.getElementById('twist-dir').value) || 1;
+  return drift_in * dir;
+}
+
+// ── PROFILES ────────────────────────────────────────────────────────
+function getProfiles(){
+  try{ return JSON.parse(localStorage.getItem('dr_profiles')||'[]'); }catch{ return []; }
+}
+function saveProfiles(p){ localStorage.setItem('dr_profiles', JSON.stringify(p)); }
+
+function saveProfile(){
+  var name = prompt('Profile name (e.g. "6.5 CM Hornady 140 ELD-M"):');
+  if(!name || !name.trim()) return;
+  var g2 = function(id){ var el=document.getElementById(id); return el?el.value:''; };
+  var profile = {
+    id: Date.now(),
+    name: name.trim(),
+    created: new Date().toLocaleDateString(),
+    bullet: g2('bullet-select'),
+    diameter: g2('diameter'),
+    weight: g2('weight'),
+    bcType: g2('bc-type'),
+    bc: g2('bc-value'),
+    mv: g2('mv'),
+    zero: g2('zero'),
+    sightHeight: g2('sight-height'),
+    twist: g2('twist'),
+    bulletLength: g2('bullet-length'),
+    temp: g2('temp'),
+    altitude: g2('altitude')
+  };
+  var profiles = getProfiles();
+  profiles.unshift(profile);
+  saveProfiles(profiles);
+  renderProfiles();
+  showPanel('profiles');
+}
+
+function loadProfile(id){
+  var profiles = getProfiles();
+  var p = profiles.find(function(x){ return x.id === id; });
+  if(!p) return;
+  var sv = function(elId, val){ var el=document.getElementById(elId); if(el&&val!==undefined&&val!=='') el.value=val; };
+  sv('diameter', p.diameter);
+  sv('weight', p.weight);
+  sv('bc-type', p.bcType);
+  sv('bc-value', p.bc);
+  sv('mv', p.mv);
+  sv('zero', p.zero);
+  sv('sight-height', p.sightHeight);
+  sv('twist', p.twist);
+  sv('bullet-length', p.bulletLength);
+  sv('sg-dia', p.diameter);
+  if(p.temp) sv('temp', p.temp);
+  if(p.altitude) sv('altitude', p.altitude);
+  // Mark active
+  document.querySelectorAll('.profile-card').forEach(function(c){ c.classList.remove('active-profile'); });
+  var card = document.getElementById('profile-'+id);
+  if(card) card.classList.add('active-profile');
+  showPanel('calculator');
+}
+
+function deleteProfile(id){
+  if(!confirm('Delete this profile?')) return;
+  var profiles = getProfiles().filter(function(p){ return p.id !== id; });
+  saveProfiles(profiles);
+  renderProfiles();
+}
+
+function renderProfiles(){
+  var profiles = getProfiles();
+  var list = document.getElementById('profiles-list');
+  var empty = document.getElementById('profiles-empty');
+  if(!profiles.length){ list.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  list.innerHTML = profiles.map(function(p){
+    return '<div class="profile-card" id="profile-'+p.id+'" onclick="loadProfile('+p.id+')">'
+      +'<div><div class="profile-name">'+p.name+'</div>'
+      +'<div class="profile-meta">'+p.weight+'gr &middot; BC '+p.bcType+' '+p.bc+' &middot; MV '+p.mv+' fps &middot; Zero '+p.zero+'yds &middot; Saved '+p.created+'</div></div>'
+      +'<div class="profile-actions" onclick="event.stopPropagation()">'
+      +'<button class="btn-icon" onclick="loadProfile('+p.id+')" title="Load profile">&#9654;</button>'
+      +'<button class="btn-icon danger" onclick="deleteProfile('+p.id+')" title="Delete profile">&#10005;</button>'
+      +'</div></div>';
+  }).join('');
+}
+
+
 function buildDB(){
   const sel=g('bullet-select');
   BULLETS.forEach((b,i)=>{const o=document.createElement('option');o.value=i;o.textContent=b.mfr+' - '+b.name;sel.appendChild(o);});
@@ -791,6 +979,7 @@ function showPanel(id){
     if((id==='calculator'&&txt.includes('calc'))||(id==='database'&&txt.includes('database'))||(id==='favorites'&&txt.includes('fav'))||(id==='wind'&&txt.includes('wind')))t.classList.add('active');
   });
   if(id==='favorites')renderFavs();
+  if(id==='profiles')renderProfiles();
 }
 
 buildDB();calcWind();
