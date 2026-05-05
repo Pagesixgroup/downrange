@@ -396,7 +396,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.97);backdrop-fi
       <button class="btn-calc" style="width:auto;padding:10px 20px;margin:0" onclick="saveProfile()">+ Save Current Setup</button>
     </div>
     <div id="profiles-list" style="display:flex;flex-direction:column;gap:10px"></div>
-    <div id="profiles-empty" style="display:none">
+    <div id="profiles-empty">
       <div class="empty-state">
         <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px;height:48px;opacity:0.3;margin-bottom:16px;display:block;margin-left:auto;margin-right:auto">
           <rect x="8" y="6" width="32" height="36" rx="3"/><path d="M16 16h16M16 22h16M16 28h10"/>
@@ -636,7 +636,7 @@ function calculate(){
   if(!rows.length)return;
   lastRows=rows; lastParams=params;
   const ul=units==='moa'?'MOA':units==='mils'?'MILS':'IN',lr=rows[rows.length-1];
-  g('results').innerHTML='<div class="stat-grid"><div class="stat-box"><div class="stat-val">'+params.mv+'</div><div class="stat-label">MV (fps)</div></div><div class="stat-box"><div class="stat-val">'+params.bc+'</div><div class="stat-label">BC ('+params.bcType+')</div></div><div class="stat-box"><div class="stat-val">'+lr.vel+'</div><div class="stat-label">Vel @ '+lr.range+'yds</div></div><div class="stat-box"><div class="stat-val">'+lr.energy+'</div><div class="stat-label">Energy @ '+lr.range+'yds</div></div></div><div class="card" style="padding:0;overflow:hidden"><table class="range-card-table"><thead><tr><th>Range (yds)</th><th>Drop ('+ul+')</th>'+(angleEnabled?'<th>Angled ('+ul+')</th>':'')+'<th>Wind ('+ul+')</th>'+(document.getElementById('sg-enable').checked?'<th>Spin (in)</th>':'')+'<th>Vel (fps)</th><th>Energy</th><th>ToF</th>'+(document.getElementById('cor-enable').checked?'<th>Cor H</th><th>Cor V</th>':'')+'</tr></thead><tbody>'+rows'+rows.map(function(r,i){var corEnabled=document.getElementById('cor-enable').checked;var cc='';if(corEnabled){var lat=parseFloat(document.getElementById('latitude').value)||35,az=parseFloat(document.getElementById('azimuth').value)||0,hemi=parseFloat(document.getElementById('hemisphere').value)||1;var cd=coriolisDeflection(r.range,parseFloat(r.time),lat,az,hemi);cc='<td>'+cd.h.toFixed(1)+'"</td><td>'+cd.v.toFixed(1)+'"</td>';}var moa=r.range*1.047/100;
+  g('results').innerHTML='<div class="stat-grid"><div class="stat-box"><div class="stat-val">'+params.mv+'</div><div class="stat-label">MV (fps)</div></div><div class="stat-box"><div class="stat-val">'+params.bc+'</div><div class="stat-label">BC ('+params.bcType+')</div></div><div class="stat-box"><div class="stat-val">'+lr.vel+'</div><div class="stat-label">Vel @ '+lr.range+'yds</div></div><div class="stat-box"><div class="stat-val">'+lr.energy+'</div><div class="stat-label">Energy @ '+lr.range+'yds</div></div></div><div class="card" style="padding:0;overflow:hidden"><table class="range-card-table"><thead><tr><th>Range (yds)</th><th>Drop ('+ul+')</th>'+(angleEnabled?'<th>Angled ('+ul+')</th>':'')+'<th>Wind ('+ul+')</th>'+(document.getElementById('sg-enable').checked?'<th>Spin (in)</th>':'')+'<th>Vel (fps)</th><th>Energy</th><th>ToF</th>'+(document.getElementById('cor-enable').checked?'<th>Cor H</th><th>Cor V</th>':'')+'</tr></thead><tbody>'+rows.map(function(r,i){var corEnabled=document.getElementById('cor-enable').checked;var cc='';if(corEnabled){var lat=parseFloat(document.getElementById('latitude').value)||35,az=parseFloat(document.getElementById('azimuth').value)||0,hemi=parseFloat(document.getElementById('hemisphere').value)||1;var cd=coriolisDeflection(r.range,parseFloat(r.time),lat,az,hemi);cc='<td>'+cd.h.toFixed(1)+'"</td><td>'+cd.v.toFixed(1)+'"</td>';}var moa=r.range*1.047/100;
     var dropForAngle=params.units==='moa'?r.drop/moa:params.units==='mils'?r.drop*0.0254/(r.range*0.0009144):r.drop;
     var angledHold=(dropForAngle*Math.cos(Math.abs(angleDeg)*Math.PI/180)).toFixed(params.units==='inches'?1:2);
     var sgOn=document.getElementById('sg-enable').checked;
@@ -976,7 +976,7 @@ function showPanel(id){
   g('panel-'+id).classList.add('active');
   document.querySelectorAll('.nav-tab').forEach(t=>{
     const txt=t.textContent.toLowerCase().trim();
-    if((id==='calculator'&&txt.includes('calc'))||(id==='database'&&txt.includes('database'))||(id==='favorites'&&txt.includes('fav'))||(id==='wind'&&txt.includes('wind')))t.classList.add('active');
+    if((id==='calculator'&&txt.includes('calc'))||(id==='database'&&txt.includes('database'))||(id==='favorites'&&txt.includes('fav'))||(id==='wind'&&txt.includes('wind'))||(id==='profiles'&&txt.includes('profile')))t.classList.add('active');
   });
   if(id==='favorites')renderFavs();
   if(id==='profiles')renderProfiles();
