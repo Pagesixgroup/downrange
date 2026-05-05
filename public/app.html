@@ -377,22 +377,62 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.97);backdrop-fi
       <div class="card">
         <div class="section-title">Wind Parameters</div>
         <div class="field-group">
-          <div class="field"><label>Wind Speed (mph)</label><input type="number" id="w-speed" value="10" step="1" oninput="calcWind()"></div>
-          <div class="field"><label>Wind Direction (o'clock)</label><input type="number" id="w-clock" value="3" step="0.5" min="1" max="12" oninput="calcWind()"></div>
+          <div class="field">
+            <label>Wind Speed (mph)</label>
+            <div style="display:flex;gap:6px;align-items:center">
+              <input type="number" id="w-speed" value="10" step="1" oninput="calcWind()" style="flex:1">
+              <button class="gps-btn" onclick="getWindLive()" title="Get live wind from GPS location">&#127751; Live</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Wind Direction</label>
+            <div style="display:flex;gap:6px;align-items:center">
+              <input type="number" id="w-clock" value="3" step="0.5" min="1" max="12" oninput="calcWind()" style="flex:1" placeholder="o'clock">
+              <select id="w-clock-preset" onchange="setWindClock()" style="flex:1;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:5px;padding:8px 10px;color:var(--cream);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none">
+                <option value="">-- Preset --</option>
+                <option value="12">12 o'clock</option>
+                <option value="1">1 o'clock</option>
+                <option value="1.5">1:30</option>
+                <option value="2">2 o'clock</option>
+                <option value="2.5">2:30</option>
+                <option value="3">3 o'clock</option>
+                <option value="3.5">3:30</option>
+                <option value="4">4 o'clock</option>
+                <option value="4.5">4:30</option>
+                <option value="5">5 o'clock</option>
+                <option value="6">6 o'clock</option>
+                <option value="7">7 o'clock</option>
+                <option value="7.5">7:30</option>
+                <option value="8">8 o'clock</option>
+                <option value="8.5">8:30</option>
+                <option value="9">9 o'clock</option>
+                <option value="9.5">9:30</option>
+                <option value="10">10 o'clock</option>
+                <option value="10.5">10:30</option>
+                <option value="11">11 o'clock</option>
+              </select>
+            </div>
+          </div>
+          <div id="wind-live-status" style="display:none;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sage);letter-spacing:0.05em"></div>
           <div class="field"><label>Target Range (yds)</label><input type="number" id="w-range" value="500" step="50" oninput="calcWind()"></div>
           <div class="field"><label>Muzzle Velocity (fps)</label><input type="number" id="w-mv" value="2650" step="10" oninput="calcWind()"></div>
         </div>
         <div style="margin-top:20px">
           <div class="section-title">Wind Clock</div>
-          <div class="clock-face">
+          <div class="clock-face" onclick="clockClick(event)" style="cursor:crosshair" title="Click to set wind direction">
             <div class="clock-labels">
               <span class="clock-label" style="top:10%;left:50%">12</span>
               <span class="clock-label" style="top:50%;left:90%">3</span>
               <span class="clock-label" style="top:90%;left:50%">6</span>
               <span class="clock-label" style="top:50%;left:10%">9</span>
+              <span class="clock-label" style="top:28%;left:82%">1:30</span>
+              <span class="clock-label" style="top:72%;left:82%">4:30</span>
+              <span class="clock-label" style="top:72%;left:18%">7:30</span>
+              <span class="clock-label" style="top:28%;left:18%">10:30</span>
             </div>
             <div class="wind-arrow" id="wind-arrow"></div>
           </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--stone);text-align:center;margin-top:6px;letter-spacing:0.08em">CLICK CLOCK FACE TO SET DIRECTION</div>
         </div>
         <button class="btn-secondary" style="width:100%;margin-top:16px" onclick="printWind()">&#128438; Print Wind Card</button>
       </div>
@@ -1421,6 +1461,70 @@ function initAdvanced(){
     if(section) section.classList.add('open');
     if(btn) btn.classList.add('active');
   }
+}
+
+
+// ── WIND LIVE / CLOCK CLICK ──────────────────────────────────────────
+function getWindLive(){
+  if(!navigator.geolocation){alert('Location not available');return;}
+  var btn=event.currentTarget; btn.textContent='...';
+  navigator.geolocation.getCurrentPosition(function(pos){
+    fetch('https://api.open-meteo.com/v1/forecast?latitude='+pos.coords.latitude+'&longitude='+pos.coords.longitude+'&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph')
+      .then(function(r){return r.json();}).then(function(d){
+        if(d.current_weather){
+          var w=d.current_weather;
+          // Wind speed
+          var wspd=document.getElementById('w-speed');
+          if(wspd){ wspd.value=Math.round(w.windspeed); }
+          // Wind direction: Open-Meteo returns degrees (0=N, 90=E, 180=S, 270=W)
+          // Convert degrees to clock position (shooter facing north)
+          // N=12, E=3, S=6, W=9
+          var deg=w.winddirection||0;
+          var clock=((deg/30)+12)%12;
+          if(clock<1)clock=12;
+          clock=Math.round(clock*2)/2; // round to nearest 0.5
+          var wclk=document.getElementById('w-clock');
+          if(wclk){ wclk.value=clock.toFixed(1); }
+          // Status
+          var status=document.getElementById('wind-live-status');
+          if(status){
+            status.style.display='block';
+            var dirs=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+            var dirStr=dirs[Math.round(deg/22.5)%16];
+            status.textContent='Live: '+Math.round(w.windspeed)+' mph from '+dirStr+' ('+Math.round(deg)+'deg) = '+clock.toFixed(1)+' o-clock';
+          }
+          btn.textContent='&#127751; Live';
+          btn.style.color='var(--sage)';
+          calcWind();
+        }
+      }).catch(function(){btn.textContent='&#127751; Live';alert('Weather unavailable');});
+  },function(){btn.textContent='&#127751; Live';alert('Location denied');});
+}
+
+function setWindClock(){
+  var preset=document.getElementById('w-clock-preset');
+  var wclk=document.getElementById('w-clock');
+  if(preset&&wclk&&preset.value){
+    wclk.value=preset.value;
+    preset.value='';
+    calcWind();
+  }
+}
+
+function clockClick(e){
+  var face=e.currentTarget;
+  var rect=face.getBoundingClientRect();
+  var cx=rect.left+rect.width/2;
+  var cy=rect.top+rect.height/2;
+  var dx=e.clientX-cx;
+  var dy=e.clientY-cy;
+  // atan2 gives angle from positive X axis, we want from top (12 o'clock)
+  var angle=Math.atan2(dx,-dy); // rotate so 0 = top
+  var hours=(angle/(2*Math.PI)*12+12)%12;
+  if(hours<1)hours=12;
+  hours=Math.round(hours*2)/2; // snap to nearest 0.5
+  var wclk=document.getElementById('w-clock');
+  if(wclk){ wclk.value=hours.toFixed(1); calcWind(); }
 }
 
 function buildDB(){
