@@ -168,13 +168,13 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.97);backdrop-fi
     </div>
   </div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showPanel('calculator')">Calculator</button>
-    <button class="nav-tab" onclick="showPanel('database')">Bullet Database</button>
+    <button class="nav-tab active" onclick="showPanel('calculator')">&#127919; Calculator</button>
+    <button class="nav-tab" onclick="showPanel('database')">&#128196; Bullets</button>
     <button class="nav-tab" onclick="showPanel('favorites')">&#9733; Favorites</button>
-    <button class="nav-tab" onclick="showPanel('wind')">Wind Calls</button>
-    <button class="nav-tab" onclick="showPanel('profiles')">&#9881; Profiles</button>
-    <button class="nav-tab" onclick="showPanel('hud')">&#9650; HUD</button>
-    <button class="nav-tab" onclick="showPanel('dope')">&#128214; DOPE Book</button>
+    <button class="nav-tab" onclick="showPanel('wind')">&#127788; Wind</button>
+    <button class="nav-tab" onclick="showPanel('profiles')">&#128194; Profiles</button>
+    <button class="nav-tab" onclick="showPanel('hud')">&#128251; HUD</button>
+    <button class="nav-tab" onclick="showPanel('dope')">&#128221; DOPE</button>
     <button class="nav-tab" onclick="showPanel('tools')">&#128295; Tools</button>
   </div>
 </nav>
@@ -1623,5 +1623,61 @@ function showPanel(id){
 
 buildDB();calcWind();initAdvanced();syncWindMV();
 </script>
+
+<!-- FOOTER -->
+<footer style="margin-top:48px;border-top:1px solid rgba(196,169,107,0.1);padding:32px 24px;background:#141009">
+  <div style="max-width:1200px;margin:0 auto">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:32px;margin-bottom:32px">
+
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:var(--cream);margin-bottom:8px">DownRange</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--sage);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:12px">Precision Ballistics Calculator</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--stone);line-height:1.8">
+          Free precision ballistics tools for long range shooters. Trajectory calculations, multi-manufacturer bullet database, wind calls, and field tools.
+        </div>
+      </div>
+
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--wheat);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:12px">Features</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--stone);line-height:2">
+          G1 / G7 Trajectory Calculator<br>
+          110+ Bullet Database<br>
+          Wind Calls &amp; Clock<br>
+          Spin &amp; Stability (Miller)<br>
+          Coriolis Effect<br>
+          Angled Fire / Rifleman Rule<br>
+          Gun &amp; Load Profiles<br>
+          DOPE Book &amp; Shot Log<br>
+          HUD Field Mode<br>
+          MV Truing Tool
+        </div>
+      </div>
+
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--wheat);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:12px">Resources</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--stone);line-height:2">
+          <a href="https://godownrange.com" style="color:var(--stone);text-decoration:none" onmouseover="this.style.color='var(--wheat)'" onmouseout="this.style.color='var(--stone)'">godownrange.com</a><br>
+          <a href="mailto:hello@godownrange.com" style="color:var(--stone);text-decoration:none" onmouseover="this.style.color='var(--wheat)'" onmouseout="this.style.color='var(--stone)'">hello@godownrange.com</a>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--wheat);letter-spacing:0.12em;text-transform:uppercase;margin-top:20px;margin-bottom:12px">Disclaimer</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--stone);line-height:1.8">
+          DownRange is a reference tool only. Always verify ballistic data with live range testing before critical applications. Ballistic coefficients and trajectory data are estimates — actual results will vary based on atmospheric conditions, barrel characteristics, and ammunition lot variation.
+        </div>
+      </div>
+
+    </div>
+
+    <div style="border-top:1px solid rgba(196,169,107,0.08);padding-top:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--stone);letter-spacing:0.08em">
+        &copy; 2026 DownRange &mdash; godownrange.com &mdash; All Rights Reserved
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--stone);letter-spacing:0.08em;text-align:right">
+        Bullet data sourced from Berger QRS, Hornady, Sierra, Lapua &amp; community measurements<br>
+        Weather data via Open-Meteo API &mdash; Free &amp; open source
+      </div>
+    </div>
+  </div>
+</footer>
+
 </body>
 </html>
