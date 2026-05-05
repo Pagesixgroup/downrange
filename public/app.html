@@ -73,8 +73,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.97);backdrop-fi
 .fav-btn{width:32px;height:32px;background:none;border:1px solid var(--border);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;font-size:14px;flex-shrink:0}
 .fav-btn:hover{border-color:var(--wheat)}
 .fav-btn.active{border-color:var(--amber);background:rgba(212,136,58,0.1)}
-.fav-star{position:absolute;top:12px;right:12px;width:24px;height:24px;background:none;border:none;cursor:pointer;font-size:14px;opacity:0.4;transition:all 0.2s;line-height:1}
-.fav-star:hover,.fav-star.active{opacity:1}
+.fav-star{position:absolute;top:10px;right:10px;width:28px;height:28px;background:rgba(0,0,0,0.3);border:1px solid rgba(196,169,107,0.2);border-radius:4px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#6b6358;transition:all 0.2s;line-height:1;padding:0}
+.fav-star:hover{color:var(--wheat);border-color:var(--wheat);background:rgba(196,169,107,0.1)}
+.fav-star.active{color:var(--amber);border-color:var(--amber);background:rgba(212,136,58,0.15)}
 .wind-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .wind-result{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center}
 .wind-val{font-family:'Playfair Display',serif;font-size:48px;font-weight:900;color:var(--wheat);line-height:1}
@@ -94,7 +95,17 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.97);backdrop-fi
 <body>
 <nav>
   <div class="nav-brand">
-    <div class="nav-logo"><img src="/icons/icon-96.png" alt="DownRange"></div>
+    <div class="nav-logo" style="width:36px;height:36px;background:#c4a96b;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <svg viewBox="0 0 36 36" fill="none" style="width:36px;height:36px">
+        <rect width="36" height="36" rx="6" fill="#231e16"/>
+        <line x1="18" y1="5" x2="18" y2="31" stroke="#c4a96b" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="5" y1="18" x2="31" y2="18" stroke="#c4a96b" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="18" cy="18" r="8" fill="none" stroke="#c4a96b" stroke-width="1" opacity="0.5"/>
+        <circle cx="18" cy="18" r="4" fill="none" stroke="#c4a96b" stroke-width="0.8" opacity="0.3"/>
+        <path d="M6 30 Q14 20 30 10" fill="none" stroke="#d4883a" stroke-width="1.5" stroke-dasharray="3,2" stroke-linecap="round"/>
+        <circle cx="18" cy="18" r="2.5" fill="#d4883a"/>
+      </svg>
+    </div>
     <div>
       <div class="nav-title">DownRange</div>
       <div class="nav-sub">Precision Ballistics</div>
