@@ -1,49 +1,31 @@
-import Head from 'next/head'
-import { useEffect } from 'react'
-
 export default function Home() {
-  useEffect(() => {
-    // Inject the app after mount
-  }, [])
-
-  return (
-    <>
-      <Head>
-        <title>DownRange — Precision Ballistics Calculator</title>
-        <meta name="description" content="Precision ballistics calculator with bullet database, trajectory calculator, and wind calls." />
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:wght@300;400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-      </Head>
-      <App />
-    </>
-  )
+  return null
 }
 
-function App() {
-  if (typeof window === 'undefined') return <div style={{background:'#1a1510',minHeight:'100vh'}} />
-  return <StaticApp />
+export async function getServerSideProps({ res }) {
+  res.setHeader('Content-Type', 'text/html')
+  res.setHeader('Cache-Control', 'public, s-maxage=3600')
+  res.end(getHTML())
+  return { props: {} }
 }
 
-function StaticApp() {
-  useEffect(() => {
-    if (window.__drInit) return
-    window.__drInit = true
-    if (typeof buildDB === 'function') buildDB()
-    if (typeof calcWind === 'function') calcWind()
-  }, [])
-
-  return <div dangerouslySetInnerHTML={{__html: getAppHTML()}} />
-}
-
-function getAppHTML() {
-  return `
+function getHTML() {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DownRange — Precision Ballistics Calculator</title>
+<meta name="description" content="Precision ballistics calculator with bullet database, trajectory calculator, and wind calls for long range shooters.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:wght@300;400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bark:#2c2416;--soil:#3d3020;--moss:#4a5240;--sage:#7a8c6e;--wheat:#c4a96b;--amber:#d4883a;--cream:#f2ead8;--fog:#b8ae9c;--stone:#6b6358;--bg:#1a1510;--card:#231e16;--border:rgba(196,169,107,0.15);--border-bright:rgba(196,169,107,0.35)}
+:root{--bark:#2c2416;--soil:#3d3020;--sage:#7a8c6e;--wheat:#c4a96b;--amber:#d4883a;--cream:#f2ead8;--fog:#b8ae9c;--stone:#6b6358;--bg:#1a1510;--card:#231e16;--border:rgba(196,169,107,0.15);--border-bright:rgba(196,169,107,0.35)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;font-size:15px;line-height:1.6;min-height:100vh}
 nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:60px}
 .nav-brand{display:flex;align-items:center;gap:12px}
 .nav-logo{width:36px;height:36px;background:var(--wheat);border-radius:4px;display:flex;align-items:center;justify-content:center}
-.nav-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:var(--cream);letter-spacing:0.02em}
+.nav-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:var(--cream)}
 .nav-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--sage);letter-spacing:0.15em;text-transform:uppercase}
 .nav-tabs{display:flex;gap:4px}
 .nav-tab{padding:6px 16px;background:none;border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone);border-radius:4px;transition:all 0.2s}
@@ -62,7 +44,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.95);backdrop-fi
 .field input:focus,.field select:focus{border-color:var(--border-bright)}
 .field select option{background:var(--bark)}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.btn-calc{width:100%;padding:13px;background:var(--wheat);color:var(--bark);border:none;border-radius:6px;font-family:'Playfair Display',serif;font-size:14px;font-weight:700;letter-spacing:0.05em;cursor:pointer;transition:all 0.2s;margin-top:8px}
+.btn-calc{width:100%;padding:13px;background:var(--wheat);color:var(--bark);border:none;border-radius:6px;font-family:'Playfair Display',serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:8px}
 .btn-calc:hover{background:var(--amber);transform:translateY(-1px)}
 .range-card-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:12px}
 .range-card-table th{background:rgba(196,169,107,0.08);color:var(--wheat);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;padding:10px 12px;text-align:right;border-bottom:1px solid var(--border)}
@@ -78,7 +60,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.95);backdrop-fi
 .db-header{display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap}
 .db-search{flex:1;min-width:200px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:6px;padding:10px 16px;color:var(--cream);font-family:'JetBrains Mono',monospace;font-size:13px;outline:none}
 .filter-row{display:flex;gap:8px;flex-wrap:wrap}
-.filter-btn{padding:6px 14px;background:none;border:1px solid var(--border);border-radius:20px;color:var(--stone);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;cursor:pointer;transition:all 0.2s;text-transform:uppercase}
+.filter-btn{padding:6px 14px;background:none;border:1px solid var(--border);border-radius:20px;color:var(--stone);font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;transition:all 0.2s;text-transform:uppercase}
 .filter-btn.active,.filter-btn:hover{border-color:var(--wheat);color:var(--wheat);background:rgba(196,169,107,0.08)}
 .bullet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 .bullet-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;transition:all 0.2s}
@@ -88,7 +70,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.95);backdrop-fi
 .bullet-specs{display:flex;gap:10px;flex-wrap:wrap}
 .spec-tag{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;background:rgba(196,169,107,0.07);border:1px solid var(--border);border-radius:3px;color:var(--fog)}
 .spec-tag.bc{color:var(--sage);border-color:rgba(122,140,110,0.3)}
-.use-bullet-btn{margin-top:10px;padding:6px 14px;background:none;border:1px solid var(--border-bright);border-radius:4px;color:var(--wheat);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
+.use-bullet-btn{margin-top:10px;padding:6px 14px;background:none;border:1px solid var(--border-bright);border-radius:4px;color:var(--wheat);font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
 .use-bullet-btn:hover{background:rgba(196,169,107,0.1)}
 .wind-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .wind-result{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center}
@@ -101,9 +83,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.95);backdrop-fi
 .empty-state{text-align:center;padding:60px 20px;color:var(--stone)}
 .empty-state svg{width:48px;height:48px;opacity:0.3;margin-bottom:16px}
 .empty-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--fog);margin-bottom:8px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--soil);border-radius:3px}
 @media(max-width:768px){.calc-grid{grid-template-columns:1fr}.stat-grid{grid-template-columns:repeat(2,1fr)}.wind-grid{grid-template-columns:1fr}nav{padding:0 16px}.nav-tabs{display:none}}
 </style>
-
+</head>
+<body>
 <nav>
   <div class="nav-brand">
     <div class="nav-logo">
@@ -155,7 +139,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.95);backdrop-fi
           <div class="section-title">Environment</div>
           <div class="field-group">
             <div class="field-row">
-              <div class="field"><label>Temperature (°F)</label><input type="number" id="temp" value="59" step="1"></div>
+              <div class="field"><label>Temperature (F)</label><input type="number" id="temp" value="59" step="1"></div>
               <div class="field"><label>Altitude (ft)</label><input type="number" id="altitude" value="0" step="100"></div>
             </div>
             <div class="field-row">
@@ -246,7 +230,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,21,16,0.95);backdrop-fi
             <div class="stat-box"><div class="stat-val" id="drift-inches">—</div><div class="stat-label">Inches</div></div>
             <div class="stat-box"><div class="stat-val" id="drift-moa">—</div><div class="stat-label">MOA</div></div>
             <div class="stat-box"><div class="stat-val" id="drift-mils">—</div><div class="stat-label">MILS</div></div>
-            <div class="stat-box"><div class="stat-val" id="drift-clicks">—</div><div class="stat-label">¼ MOA Clicks</div></div>
+            <div class="stat-box"><div class="stat-val" id="drift-clicks">—</div><div class="stat-label">1/4 MOA Clicks</div></div>
           </div>
         </div>
         <div class="card">
@@ -305,115 +289,114 @@ const BULLETS=[
   {mfr:"Hammer",name:"30 Cal 168gr Hunter",cal:"30 Cal",wt:168,bc:0.262,bcType:"G7",dia:0.308,type:"Hunting"},
   {mfr:"Peterson",name:"6.5mm 140gr Match",cal:"6.5mm",wt:140,bc:0.301,bcType:"G7",dia:0.264,type:"Target"},
   {mfr:"Peterson",name:"30 Cal 175gr Match",cal:"30 Cal",wt:175,bc:0.280,bcType:"G7",dia:0.308,type:"Target"},
-]
+];
 
-let activeMfr='All',activeCal='All'
-const g=id=>document.getElementById(id)
-const gv=id=>{const el=g(id);return el?parseFloat(el.value)||0:0}
-const gs=id=>{const el=g(id);return el?el.value:''}
+let activeMfr='All',activeCal='All';
+const g=id=>document.getElementById(id);
+const gv=id=>{const el=g(id);return el?parseFloat(el.value)||0:0};
+const gs=id=>{const el=g(id);return el?el.value:''};
 
 function showPanel(id){
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'))
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'))
-  g('panel-'+id).classList.add('active')
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  g('panel-'+id).classList.add('active');
   document.querySelectorAll('.nav-tab').forEach(t=>{
-    const txt=t.textContent.toLowerCase()
-    if((id==='calculator'&&txt.includes('calc'))||(id==='database'&&txt.includes('bullet'))||(id==='wind'&&txt.includes('wind')))t.classList.add('active')
-  })
+    const txt=t.textContent.toLowerCase();
+    if((id==='calculator'&&txt.includes('calc'))||(id==='database'&&txt.includes('bullet'))||(id==='wind'&&txt.includes('wind')))t.classList.add('active');
+  });
 }
 
-function airDensityRatio(altFt,tempF){return Math.exp(-altFt*0.3048/8435)*((tempF+459.67+459.67-459.67)/518.67*(518.67/(tempF+459.67)))}
-function airDensityRatio(altFt,tempF){const tR=tempF+459.67;return Math.exp(-altFt*0.3048/8435)*(518.67/tR)}
-function g7Cd(mach){if(mach>1.8)return 0.2303;if(mach>1.4)return 0.2303+(1.8-mach)*0.04;if(mach>1.2)return 0.2700+(1.4-mach)*0.12;if(mach>0.8)return 0.2950+(1.2-mach)*0.09;return 0.3350}
+function airDensityRatio(altFt,tempF){return Math.exp(-altFt*0.3048/8435)*(518.67/(tempF+459.67));}
+function g7Cd(mach){if(mach>1.8)return 0.2303;if(mach>1.4)return 0.2303+(1.8-mach)*0.04;if(mach>1.2)return 0.2700+(1.4-mach)*0.12;if(mach>0.8)return 0.2950+(1.2-mach)*0.09;return 0.3350;}
 
 function calculateTrajectory(p){
-  const rho=airDensityRatio(p.altFt,p.tempF)
-  const bcG7=p.bcType==='G1'?p.bc*0.505:p.bc
-  const sos=1116.45*Math.sqrt((p.tempF+459.67)/518.67)
-  const windFactor=Math.abs(Math.sin(p.windClock*Math.PI/6))
-  const windMs=p.windMph*0.44704*windFactor
-  const dt=0.001
-  let tx=p.mv*0.3048,ty=0,tx2=0,ty2=-p.sightHt*0.0254,zeroCorr=0
+  const rho=airDensityRatio(p.altFt,p.tempF);
+  const bcG7=p.bcType==='G1'?p.bc*0.505:p.bc;
+  const sos=1116.45*Math.sqrt((p.tempF+459.67)/518.67);
+  const windFactor=Math.abs(Math.sin(p.windClock*Math.PI/6));
+  const windMs=p.windMph*0.44704*windFactor;
+  const dt=0.001;
+  let tx=p.mv*0.3048,ty=0,tx2=0,ty2=-p.sightHt*0.0254,zeroCorr=0;
   for(let s=0;s<80000;s++){
-    const v=Math.sqrt(tx*tx+ty*ty),mach=v/sos,cd=g7Cd(mach)/bcG7*rho
-    tx+=(-cd*tx*v)*dt;ty+=(-9.80665-cd*ty*v)*dt;tx2+=tx*dt;ty2+=ty*dt
-    if(tx2/0.9144>=p.zeroYds){zeroCorr=ty2;break}
+    const v=Math.sqrt(tx*tx+ty*ty),mach=v/sos,cd=g7Cd(mach)/bcG7*rho;
+    tx+=(-cd*tx*v)*dt;ty+=(-9.80665-cd*ty*v)*dt;tx2+=tx*dt;ty2+=ty*dt;
+    if(tx2/0.9144>=p.zeroYds){zeroCorr=ty2;break;}
   }
-  let vx=p.mv*0.3048,vy=0,x=0,y=-p.sightHt*0.0254,t=0,drift=0
-  const results=[],nextRec=[p.startYd]
+  let vx=p.mv*0.3048,vy=0,x=0,y=-p.sightHt*0.0254,t=0,drift=0;
+  const results=[],next=[p.startYd];
   for(let s=0;s<200000;s++){
-    const v=Math.sqrt(vx*vx+vy*vy),mach=v/sos,cd=g7Cd(mach)/bcG7*rho,ay=-9.80665-cd*vy*v
-    vx+=(-cd*vx*v)*dt;vy+=ay*dt;x+=vx*dt;y+=vy*dt;drift+=windMs*dt;t+=dt
-    const xYds=x/0.9144
-    if(xYds>=nextRec[0]){
-      const dropIn=(y-(xYds/p.zeroYds)*zeroCorr)*(1/0.0254)
-      const driftIn=drift*(1/0.0254)
-      const velFps=v/0.3048
-      const energy=0.5*(p.wt/7000)*velFps*velFps/32.174*2
-      const moa=val=>val/(xYds*1.047/100)
-      const mils=val=>val/(xYds*0.09144)
-      let dd,dr
-      if(p.units==='moa'){dd=moa(dropIn).toFixed(2);dr=moa(driftIn).toFixed(2)}
-      else if(p.units==='mils'){dd=mils(dropIn*0.0254).toFixed(2);dr=mils(driftIn*0.0254).toFixed(2)}
-      else{dd=dropIn.toFixed(1);dr=driftIn.toFixed(1)}
-      results.push({range:xYds.toFixed(0),drop:dropIn,dropDisp:dd,driftDisp:dr,vel:velFps.toFixed(0),energy:energy.toFixed(0),time:t.toFixed(3),isZero:Math.abs(xYds-p.zeroYds)<(p.stepYd/2)})
-      nextRec[0]+=p.stepYd
-      if(xYds>=p.stopYd)break
+    const v=Math.sqrt(vx*vx+vy*vy),mach=v/sos,cd=g7Cd(mach)/bcG7*rho,ay=-9.80665-cd*vy*v;
+    vx+=(-cd*vx*v)*dt;vy+=ay*dt;x+=vx*dt;y+=vy*dt;drift+=windMs*dt;t+=dt;
+    const xYds=x/0.9144;
+    if(xYds>=next[0]){
+      const dropIn=(y-(xYds/p.zeroYds)*zeroCorr)*(1/0.0254);
+      const driftIn=drift*(1/0.0254);
+      const velFps=v/0.3048;
+      const energy=0.5*(p.wt/7000)*velFps*velFps/32.174*2;
+      const moa=val=>val/(xYds*1.047/100);
+      const mils=val=>val/(xYds*0.09144);
+      let dd,dr;
+      if(p.units==='moa'){dd=moa(dropIn).toFixed(2);dr=moa(driftIn).toFixed(2);}
+      else if(p.units==='mils'){dd=mils(dropIn*0.0254).toFixed(2);dr=mils(driftIn*0.0254).toFixed(2);}
+      else{dd=dropIn.toFixed(1);dr=driftIn.toFixed(1);}
+      results.push({range:xYds.toFixed(0),drop:dropIn,dropDisp:dd,driftDisp:dr,vel:velFps.toFixed(0),energy:energy.toFixed(0),time:t.toFixed(3),isZero:Math.abs(xYds-p.zeroYds)<(p.stepYd/2)});
+      next[0]+=p.stepYd;
+      if(xYds>=p.stopYd)break;
     }
   }
-  return results
+  return results;
 }
 
 function calculate(){
-  const units=gs('output-units')
-  const rows=calculateTrajectory({bc:gv('bc-value'),bcType:gs('bc-type'),wt:gv('weight'),mv:gv('mv'),zeroYds:gv('zero'),sightHt:gv('sight-height'),tempF:gv('temp'),altFt:gv('altitude'),windMph:gv('wind-speed'),windClock:parseFloat(gs('wind-dir'))||3,startYd:gv('range-start'),stopYd:gv('range-stop'),stepYd:gv('range-step'),units})
-  if(!rows.length)return
-  const ul=units==='moa'?'MOA':units==='mils'?'MILS':'IN',lr=rows[rows.length-1]
-  g('results').innerHTML='<div class="stat-grid"><div class="stat-box"><div class="stat-val">'+gv('mv')+'</div><div class="stat-label">MV (fps)</div></div><div class="stat-box"><div class="stat-val">'+gv('bc-value')+'</div><div class="stat-label">BC ('+gs('bc-type')+')</div></div><div class="stat-box"><div class="stat-val">'+lr.vel+'</div><div class="stat-label">Vel @ '+lr.range+'yds</div></div><div class="stat-box"><div class="stat-val">'+lr.energy+'</div><div class="stat-label">Energy @ '+lr.range+'yds</div></div></div><div class="card" style="padding:0;overflow:hidden"><table class="range-card-table"><thead><tr><th>Range (yds)</th><th>Drop ('+ul+')</th><th>Wind ('+ul+')</th><th>Vel (fps)</th><th>Energy (ft·lbf)</th><th>ToF (s)</th></tr></thead><tbody>'+rows.map(r=>'<tr><td class="'+(r.isZero?'zero':'')+'">'+r.range+'</td><td class="'+(r.drop<-0.5?'neg':r.drop>0.5?'pos':'zero')+'">'+r.dropDisp+'</td><td class="neg">'+r.driftDisp+'</td><td>'+r.vel+'</td><td>'+r.energy+'</td><td>'+r.time+'</td></tr>').join('')+'</tbody></table></div>'
+  const units=gs('output-units');
+  const rows=calculateTrajectory({bc:gv('bc-value'),bcType:gs('bc-type'),wt:gv('weight'),mv:gv('mv'),zeroYds:gv('zero'),sightHt:gv('sight-height'),tempF:gv('temp'),altFt:gv('altitude'),windMph:gv('wind-speed'),windClock:parseFloat(gs('wind-dir'))||3,startYd:gv('range-start'),stopYd:gv('range-stop'),stepYd:gv('range-step'),units});
+  if(!rows.length)return;
+  const ul=units==='moa'?'MOA':units==='mils'?'MILS':'IN',lr=rows[rows.length-1];
+  g('results').innerHTML='<div class="stat-grid"><div class="stat-box"><div class="stat-val">'+gv('mv')+'</div><div class="stat-label">MV (fps)</div></div><div class="stat-box"><div class="stat-val">'+gv('bc-value')+'</div><div class="stat-label">BC ('+gs('bc-type')+')</div></div><div class="stat-box"><div class="stat-val">'+lr.vel+'</div><div class="stat-label">Vel @ '+lr.range+'yds</div></div><div class="stat-box"><div class="stat-val">'+lr.energy+'</div><div class="stat-label">Energy @ '+lr.range+'yds</div></div></div><div class="card" style="padding:0;overflow:hidden"><table class="range-card-table"><thead><tr><th>Range (yds)</th><th>Drop ('+ul+')</th><th>Wind ('+ul+')</th><th>Vel (fps)</th><th>Energy (ft-lbf)</th><th>ToF (s)</th></tr></thead><tbody>'+rows.map(r=>'<tr><td class="'+(r.isZero?'zero':'')+'">'+r.range+'</td><td class="'+(r.drop<-0.5?'neg':r.drop>0.5?'pos':'zero')+'">'+r.dropDisp+'</td><td class="neg">'+r.driftDisp+'</td><td>'+r.vel+'</td><td>'+r.energy+'</td><td>'+r.time+'</td></tr>').join('')+'</tbody></table></div>';
 }
 
 function buildDB(){
-  const sel=g('bullet-select')
-  BULLETS.forEach((b,i)=>{const o=document.createElement('option');o.value=i;o.textContent=b.mfr+' – '+b.name;sel.appendChild(o)})
-  const mfrs=['All',...new Set(BULLETS.map(b=>b.mfr))]
-  const cals=['All',...new Set(BULLETS.map(b=>b.cal))]
-  const mDiv=g('mfr-filters'),cDiv=g('cal-filters')
-  mfrs.forEach(m=>{const btn=document.createElement('button');btn.className='filter-btn'+(m==='All'?' active':'');btn.textContent=m;btn.onclick=()=>{activeMfr=m;document.querySelectorAll('#mfr-filters .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderBullets()};mDiv.appendChild(btn)})
-  cals.forEach(c=>{const btn=document.createElement('button');btn.className='filter-btn'+(c==='All'?' active':'');btn.textContent=c;btn.onclick=()=>{activeCal=c;document.querySelectorAll('#cal-filters .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderBullets()};cDiv.appendChild(btn)})
-  renderBullets()
+  const sel=g('bullet-select');
+  BULLETS.forEach((b,i)=>{const o=document.createElement('option');o.value=i;o.textContent=b.mfr+' - '+b.name;sel.appendChild(o);});
+  const mfrs=['All',...new Set(BULLETS.map(b=>b.mfr))];
+  const cals=['All',...new Set(BULLETS.map(b=>b.cal))];
+  const mDiv=g('mfr-filters'),cDiv=g('cal-filters');
+  mfrs.forEach(m=>{const btn=document.createElement('button');btn.className='filter-btn'+(m==='All'?' active':'');btn.textContent=m;btn.onclick=()=>{activeMfr=m;document.querySelectorAll('#mfr-filters .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderBullets();};mDiv.appendChild(btn);});
+  cals.forEach(c=>{const btn=document.createElement('button');btn.className='filter-btn'+(c==='All'?' active':'');btn.textContent=c;btn.onclick=()=>{activeCal=c;document.querySelectorAll('#cal-filters .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderBullets();};cDiv.appendChild(btn);});
+  renderBullets();
 }
 
-function filterBullets(){renderBullets()}
+function filterBullets(){renderBullets();}
 
 function renderBullets(){
-  const q=(g('db-search').value||'').toLowerCase()
-  const filtered=BULLETS.filter(b=>(activeMfr==='All'||b.mfr===activeMfr)&&(activeCal==='All'||b.cal===activeCal)&&(!q||b.name.toLowerCase().includes(q)||b.mfr.toLowerCase().includes(q)))
-  g('bullet-grid').innerHTML=filtered.map(b=>'<div class="bullet-card"><div class="bullet-mfr">'+b.mfr+'</div><div class="bullet-name">'+b.name+'</div><div class="bullet-specs"><span class="spec-tag">'+b.cal+'</span><span class="spec-tag">'+b.wt+' gr</span><span class="spec-tag bc">'+b.bcType+' '+b.bc+'</span><span class="spec-tag">'+b.type+'</span></div><button class="use-bullet-btn" onclick="useBullet('+BULLETS.indexOf(b)+')">Use in Calculator →</button></div>').join('')
+  const q=(g('db-search').value||'').toLowerCase();
+  const filtered=BULLETS.filter(b=>(activeMfr==='All'||b.mfr===activeMfr)&&(activeCal==='All'||b.cal===activeCal)&&(!q||b.name.toLowerCase().includes(q)||b.mfr.toLowerCase().includes(q)));
+  g('bullet-grid').innerHTML=filtered.map(b=>'<div class="bullet-card"><div class="bullet-mfr">'+b.mfr+'</div><div class="bullet-name">'+b.name+'</div><div class="bullet-specs"><span class="spec-tag">'+b.cal+'</span><span class="spec-tag">'+b.wt+' gr</span><span class="spec-tag bc">'+b.bcType+' '+b.bc+'</span><span class="spec-tag">'+b.type+'</span></div><button class="use-bullet-btn" onclick="useBullet('+BULLETS.indexOf(b)+')">Use in Calculator</button></div>').join('');
 }
 
 function useBullet(i){
-  const b=BULLETS[i]
-  g('diameter').value=b.dia;g('weight').value=b.wt;g('bc-type').value=b.bcType;g('bc-value').value=b.bc
-  g('bullet-select').value=i
-  showPanel('calculator')
+  const b=BULLETS[i];
+  g('diameter').value=b.dia;g('weight').value=b.wt;g('bc-type').value=b.bcType;g('bc-value').value=b.bc;g('bullet-select').value=i;
+  showPanel('calculator');
 }
 
-function loadBullet(){const i=gs('bullet-select');if(i)useBullet(parseInt(i))}
+function loadBullet(){const i=gs('bullet-select');if(i)useBullet(parseInt(i));}
 
 function calcWind(){
-  const speed=gv('w-speed'),clock=gv('w-clock')||3,range=gv('w-range')||500,mv=gv('w-mv')||2650
-  const value=Math.abs(Math.sin(clock*Math.PI/6)),pct=Math.round(value*100)
-  g('wind-value-pct').textContent=pct+'%'
-  g('wind-value-label').textContent=pct===100?'Full Value Wind':pct===50?'Half Value Wind':pct===0?'No Wind Value':'Partial Value Wind'
-  g('wind-arrow').style.transform='translateX(-50%) rotate('+(clock-12)*30+'deg)'
-  const tof=range/(mv*0.8),dIn=speed*0.44704*value*tof*(1/0.0254)
-  const dMoa=dIn/(range*1.047/100),dMil=dIn*0.0254/(range*0.0009144)
-  g('drift-inches').textContent=dIn.toFixed(1);g('drift-moa').textContent=dMoa.toFixed(2)
-  g('drift-mils').textContent=dMil.toFixed(2);g('drift-clicks').textContent=Math.round(dMoa*4)
-  g('wind-table').innerHTML=[5,10,15,20,25,30].map(s=>{const wm=s*0.44704,di=wm*value*tof*(1/0.0254),dm=di/(range*1.047/100),dmil=di*0.0254/(range*0.0009144);return'<tr><td>'+s+' mph</td><td>'+di.toFixed(1)+'"</td><td>'+dm.toFixed(2)+'</td><td>'+dmil.toFixed(2)+'</td></tr>'}).join('')
+  const speed=gv('w-speed'),clock=gv('w-clock')||3,range=gv('w-range')||500,mv=gv('w-mv')||2650;
+  const value=Math.abs(Math.sin(clock*Math.PI/6)),pct=Math.round(value*100);
+  g('wind-value-pct').textContent=pct+'%';
+  g('wind-value-label').textContent=pct===100?'Full Value Wind':pct===50?'Half Value Wind':pct===0?'No Wind Value':'Partial Value Wind';
+  g('wind-arrow').style.transform='translateX(-50%) rotate('+(clock-12)*30+'deg)';
+  const tof=range/(mv*0.8),dIn=speed*0.44704*value*tof*(1/0.0254);
+  const dMoa=dIn/(range*1.047/100),dMil=dIn*0.0254/(range*0.0009144);
+  g('drift-inches').textContent=dIn.toFixed(1);g('drift-moa').textContent=dMoa.toFixed(2);
+  g('drift-mils').textContent=dMil.toFixed(2);g('drift-clicks').textContent=Math.round(dMoa*4);
+  g('wind-table').innerHTML=[5,10,15,20,25,30].map(s=>{const wm=s*0.44704,di=wm*value*tof*(1/0.0254),dm=di/(range*1.047/100),dmil=di*0.0254/(range*0.0009144);return'<tr><td>'+s+' mph</td><td>'+di.toFixed(1)+'"</td><td>'+dm.toFixed(2)+'</td><td>'+dmil.toFixed(2)+'</td></tr>';}).join('');
 }
 
 buildDB();calcWind();
 </script>
-`
+</body>
+</html>`
 }
